@@ -39,14 +39,57 @@ public class BookingService : IBookingService
         var createdBooking = await _bookingRepository.AddBookingAsync(
             booking, request.SeatIds);
 
+        return MapToResponse(createdBooking);
+    }
+    public async Task<List<BookingResponse>> GetAllAsync(
+    int? showId, string? status)
+    {
+        var bookings = await _bookingRepository.GetAllAsync(showId, status);
+
+        return bookings.Select(MapToResponse).ToList();
+    }
+
+    public async Task<BookingResponse?> GetByIdAsync(int bookingId)
+    {
+        var booking = await _bookingRepository.GetByIdAsync(bookingId);
+
+        if (booking == null)
+            return null;
+
+        return MapToResponse(booking);
+    }
+
+    public async Task<List<BookingResponse>> GetByShowIdAsync(int showId)
+    {
+        if (!await _bookingRepository.ShowExistsAsync(showId))
+            throw new KeyNotFoundException("Show not found.");
+
+        var bookings = await _bookingRepository.GetByShowIdAsync(showId);
+
+        return bookings.Select(MapToResponse).ToList();
+    }
+
+    public async Task<BookingResponse> CancelBookingAsync(int bookingId)
+    {
+        var booking = await _bookingRepository.CancelBookingAsync(bookingId);
+
+        return MapToResponse(booking);
+    }
+
+    private static BookingResponse MapToResponse(Booking booking)
+    {
         return new BookingResponse
         {
-            BookingId = createdBooking.BookingId,
-            BookingReference = createdBooking.BookingReference,
-            ShowId = createdBooking.ShowId,
-            TotalAmount = createdBooking.TotalAmount,
-            Status = createdBooking.Status,
-            Seats = createdBooking.BookingSeats
+            BookingId = booking.BookingId,
+            BookingReference = booking.BookingReference,
+            ShowId = booking.ShowId,
+            CustomerName = booking.CustomerName,
+            CustomerEmail = booking.CustomerEmail,
+            CustomerPhone = booking.CustomerPhone,
+            BookingDate = booking.BookingDate,
+            TotalAmount = booking.TotalAmount,
+            Status = booking.Status,
+            Seats = booking.BookingSeats
                 .Select(s => s.Seat.RowName + s.Seat.SeatNumber)
                 .ToList()
         };
