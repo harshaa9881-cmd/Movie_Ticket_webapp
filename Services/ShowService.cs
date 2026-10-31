@@ -80,6 +80,17 @@ public class ShowService : IShowService
             TicketPrice = request.TicketPrice
         };
 
+        var seats = await _showRepository.GetSeatsByScreenIdAsync(request.ScreenId);
+
+        if (!seats.Any())
+            throw new InvalidOperationException("No seats are configured for this screen.");
+
+        show.ShowSeats = seats.Select(s => new ShowSeat
+        {
+            SeatId = s.SeatId,
+            Status = "Available"
+        }).ToList();
+
         await _showRepository.AddAsync(show);
 
         var savedShow = await _showRepository.GetByIdAsync(show.ShowId);

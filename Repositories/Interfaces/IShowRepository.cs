@@ -9,6 +9,7 @@ public interface IShowRepository
     Task<List<Show>> GetByMovieIdAsync(int movieId);
     Task<List<Show>> GetByTheatreIdAsync(int theatreId);
     Task<List<Show>> GetByDateAsync(DateTime date);
+    Task<List<Seat>> GetSeatsByScreenIdAsync(int screenId);
     Task<bool> MovieExistsAsync(int movieId);
     Task<bool> ScreenExistsAsync(int screenId);
     Task<bool> HasOverlappingShowAsync(

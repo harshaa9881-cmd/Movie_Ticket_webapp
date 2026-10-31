@@ -120,4 +120,12 @@ public class ShowRepository : IShowRepository
         _context.Shows.Remove(show);
         await _context.SaveChangesAsync();
     }
+    public async Task<List<Seat>> GetSeatsByScreenIdAsync(int screenId)
+    {
+        return await _context.Seats
+            .Where(s => s.ScreenId == screenId)
+            .OrderBy(s => s.RowName)
+            .ThenBy(s => s.SeatNumber)
+            .ToListAsync();
+    }
 }
