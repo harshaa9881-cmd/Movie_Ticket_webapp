@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using MovieTicketBooking.DTOs.Theatres;
 using MovieTicketBooking.Services.Interfaces;
 
@@ -6,6 +7,7 @@ namespace MovieTicketBooking.Controllers;
 
 [ApiController]
 [Route("api/theatres")]
+[Authorize]
 public class TheatresController : ControllerBase
 {
     private readonly ITheatreService _theatreService;

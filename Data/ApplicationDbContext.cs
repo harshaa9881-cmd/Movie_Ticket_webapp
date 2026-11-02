@@ -27,7 +27,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<Booking> Bookings => Set<Booking>();
 
     public DbSet<BookingSeat> BookingSeats => Set<BookingSeat>();
-
+    public DbSet<User> Users => Set<User>();
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -253,5 +253,8 @@ public class ApplicationDbContext : DbContext
                     "CK_BookingSeats_Price",
                     "[Price] >= 0"));
         });
+        modelBuilder.Entity<User>()
+            .HasIndex(u => u.Email)
+            .IsUnique();
     }
 }
