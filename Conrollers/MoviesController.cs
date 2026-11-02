@@ -3,12 +3,12 @@ using Microsoft.AspNetCore.Mvc;
 using MovieTicketBooking.DTOs;
 using MovieTicketBooking.DTOs.Movies;
 using MovieTicketBooking.Services.Interfaces;
+using MovieTicketBooking.Constants;
 
 namespace MovieTicketBooking.Controllers;
 
 [ApiController]
 [Route("api/movies")]
-[Authorize]
 public class MoviesController : ControllerBase
 {
     private readonly IMovieService _movieService;
@@ -56,6 +56,7 @@ public class MoviesController : ControllerBase
 
     // POST: api/movies
     [HttpPost]
+    [Authorize(Roles = UserRoles.Admin)]
     public async Task<ActionResult<MovieResponse>> AddMovie(
         CreateMovieRequest request)
     {
@@ -69,6 +70,7 @@ public class MoviesController : ControllerBase
 
     // PUT: api/movies/1
     [HttpPut("{id:int}")]
+    [Authorize(Roles = UserRoles.Admin)]
     public async Task<ActionResult<MovieResponse>> UpdateMovie(
         int id,
         UpdateMovieRequest request)
@@ -86,6 +88,7 @@ public class MoviesController : ControllerBase
 
     // DELETE: api/movies/1
     [HttpDelete("{id:int}")]
+    [Authorize(Roles = UserRoles.Admin)]
     public async Task<IActionResult> DeleteMovie(int id)
     {
         if (id <= 0)

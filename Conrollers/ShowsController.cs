@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using MovieTicketBooking.DTOs.Shows;
 using MovieTicketBooking.Services.Interfaces;
+using MovieTicketBooking.Constants;
 
 namespace MovieTicketBooking.Controllers;
 
@@ -73,6 +74,7 @@ public class ShowsController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = UserRoles.Admin)]
     public async Task<IActionResult> AddShow(CreateShowRequest request)
     {
         try
@@ -93,6 +95,7 @@ public class ShowsController : ControllerBase
     }
 
     [HttpPut("{id}")]
+    [Authorize(Roles = UserRoles.Admin)]
     public async Task<IActionResult> UpdateShow(int id, UpdateShowRequest request)
     {
         try
@@ -115,6 +118,7 @@ public class ShowsController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [Authorize(Roles = UserRoles.Admin)]
     public async Task<IActionResult> DeleteShow(int id)
     {
         var result = await _showService.DeleteShowAsync(id);

@@ -2,12 +2,12 @@
 using Microsoft.AspNetCore.Mvc;
 using MovieTicketBooking.DTOs.Seats;
 using MovieTicketBooking.Services.Interfaces;
+using MovieTicketBooking.Constants;
 
 namespace MovieTicketBooking.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize]
 public class SeatsController : ControllerBase
 {
     private readonly ISeatService _seatService;
@@ -38,6 +38,7 @@ public class SeatsController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = UserRoles.Admin)]
     public async Task<IActionResult> AddSeat(CreateSeatRequest request)
     {
         try
@@ -58,6 +59,7 @@ public class SeatsController : ControllerBase
     }
 
     [HttpPost("bulk")]
+    [Authorize(Roles = UserRoles.Admin)]
     public async Task<IActionResult> AddBulkSeats(BulkCreateSeatsRequest request)
     {
         try
@@ -77,6 +79,7 @@ public class SeatsController : ControllerBase
     }
 
     [HttpPut("{id}")]
+    [Authorize(Roles = UserRoles.Admin)]
     public async Task<IActionResult> UpdateSeat(int id, UpdateSeatRequest request)
     {
         try
@@ -99,6 +102,7 @@ public class SeatsController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [Authorize(Roles = UserRoles.Admin)]
     public async Task<IActionResult> DeleteSeat(int id)
     {
         var result = await _seatService.DeleteSeatAsync(id);

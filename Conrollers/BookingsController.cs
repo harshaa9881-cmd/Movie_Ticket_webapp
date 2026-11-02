@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using MovieTicketBooking.DTOs.Bookings;
 using MovieTicketBooking.Services.Interfaces;
+using MovieTicketBooking.Constants;
 
 namespace MovieTicketBooking.Controllers;
 
@@ -40,6 +41,7 @@ public class BookingsController : ControllerBase
         }
     }
     [HttpGet]
+    [Authorize(Roles = UserRoles.Admin)]
     public async Task<IActionResult> GetAll(
     [FromQuery] int? showId,
     [FromQuery] string? status)
@@ -50,6 +52,7 @@ public class BookingsController : ControllerBase
     }
 
     [HttpGet("{id}")]
+    [Authorize(Roles = UserRoles.Admin)]
     public async Task<IActionResult> GetById(int id)
     {
         var booking = await _bookingService.GetByIdAsync(id);
@@ -61,6 +64,7 @@ public class BookingsController : ControllerBase
     }
 
     [HttpGet("show/{showId}")]
+    [Authorize(Roles = UserRoles.Admin)]
     public async Task<IActionResult> GetByShowId(int showId)
     {
         try
@@ -76,6 +80,7 @@ public class BookingsController : ControllerBase
     }
 
     [HttpPut("{id}/cancel")]
+    [Authorize(Roles = UserRoles.Admin)]
     public async Task<IActionResult> CancelBooking(int id)
     {
         try

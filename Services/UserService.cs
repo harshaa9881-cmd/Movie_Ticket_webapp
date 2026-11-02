@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿
+using Microsoft.AspNetCore.Identity;
+using MovieTicketBooking.Constants;
 using MovieTicketBooking.DTOs.Auth;
 using MovieTicketBooking.Models;
 using MovieTicketBooking.Repositories.Interfaces;
@@ -37,8 +39,10 @@ public class UserService : IUserService
 
         var user = new User
         {
-            FullName = dto.FullName.Trim(),
-            Email = email
+            FullName = dto.FullName,
+            Email = email,
+            PasswordHash = string.Empty,
+            Role = UserRoles.Customer
         };
 
         user.PasswordHash = _passwordHasher.HashPassword(
