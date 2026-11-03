@@ -22,4 +22,15 @@
     <PackageReference Include="Scalar.AspNetCore" Version="2.18.5" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="movie-ticket-booking-ui\src\app\core\gaurds\" />
+    <Folder Include="movie-ticket-booking-ui\src\app\core\interceptors\" />
+    <Folder Include="movie-ticket-booking-ui\src\app\core\services\" />
+    <Folder Include="movie-ticket-booking-ui\src\app\features\auth\" />
+    <Folder Include="movie-ticket-booking-ui\src\app\features\customer\" />
+    <Folder Include="movie-ticket-booking-ui\src\app\features\admin\" />
+    <Folder Include="movie-ticket-booking-ui\src\app\shared\components\" />
+    <Folder Include="movie-ticket-booking-ui\src\app\shared\models\" />
+  </ItemGroup>
+
 </Project>
