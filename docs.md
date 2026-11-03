@@ -1,18 +1,31 @@
 # Movie Ticket Booking System – Development Documentation
 
-## Project Development History
+This document describes the development history of the Movie Ticket Booking System.
 
-This document describes the development process of the Movie Ticket Booking System commit by commit.
+The project was developed incrementally using Git commits. Each commit represents a development stage and introduces specific functionality.
 
-The project was implemented incrementally, following the Controller → Service → Repository → DbContext architecture.
+The application uses:
 
-Each commit introduced a specific group of functionalities while maintaining the coding style and structure of the reference Web API project.
+- C#
+- .NET 10
+- ASP.NET Core Web API
+- Entity Framework Core 10
+- SQL Server
+- JWT Bearer Authentication
+- Role-Based Authorization
+- User Secrets
+
+The project follows the architecture:
+
+**Controller → Service → Repository → DbContext → SQL Server**
 
 ---
 
-# Commit 1 – Project Setup
+## Commit 1 – Project Setup
 
-**Commit message:**
+**Commit Hash:** `cef693f`
+
+**Commit Message:**
 
 ```text
 chore: initialize movie ticket booking web api
@@ -20,50 +33,29 @@ chore: initialize movie ticket booking web api
 
 ### Objective
 
-Create the initial ASP.NET Core Web API project and configure the required packages and database connection.
+Create the initial ASP.NET Core Web API project and configure the basic application structure.
 
-### Changes Made
+### Work Completed
 
-1. Created an ASP.NET Core Web API project using .NET 10.
-2. Selected the controller-based Web API template.
-3. Removed the default WeatherForecast example files.
-4. Installed the required NuGet packages.
-5. Configured the SQL Server connection string.
-6. Configured Scalar and OpenAPI.
-7. Added a `.gitignore` file.
-8. Verified that the application could build and run.
-
-### Packages Installed
-
-| Package | Purpose |
-|---|---|
-| Microsoft.AspNetCore.OpenApi | OpenAPI documentation support |
-| Microsoft.EntityFrameworkCore.Design | EF Core design-time operations |
-| Microsoft.EntityFrameworkCore.SqlServer | SQL Server database provider |
-| Microsoft.EntityFrameworkCore.Tools | EF Core migration tools |
-| Scalar.AspNetCore | API documentation interface |
-
-### Configuration
-
-The connection string was added to `appsettings.json`.
-
-```json
-{
-  "ConnectionStrings": {
-    "DefaultConnection": "Server=.\\SQLEXPRESS;Database=MovieTicketBookingDB;Trusted_Connection=True;TrustServerCertificate=True;"
-  }
-}
-```
+- Created the ASP.NET Core Web API project using .NET 10.
+- Configured the project for controller-based API development.
+- Removed the default WeatherForecast implementation.
+- Installed the required packages for OpenAPI, Entity Framework Core and Scalar.
+- Configured the initial application settings.
+- Created the initial Git repository structure.
+- Added the `.gitignore` file.
 
 ### Result
 
-The initial Web API project was created and configured with the required development dependencies.
+The initial Web API project was created and configured successfully.
 
 ---
 
-# Commit 2 – Models and DbContext
+## Commit 2 – Models and DbContext
 
-**Commit message:**
+**Commit Hash:** `7493dc1`
+
+**Commit Message:**
 
 ```text
 feat: add movie booking models and dbcontext
@@ -71,165 +63,48 @@ feat: add movie booking models and dbcontext
 
 ### Objective
 
-Create the entity classes required for the Movie Ticket Booking System and configure their database relationships.
+Create the entity models and configure the database context.
 
-### Changes Made
+### Work Completed
 
-Created eight model classes.
+Created the eight main entity models:
 
-#### 1. Movie.cs
+1. Movie
+2. Theatre
+3. Screen
+4. Seat
+5. Show
+6. ShowSeat
+7. Booking
+8. BookingSeat
 
-Stores movie information.
+Implemented the entity properties and navigation properties required for the database relationships.
 
-Properties include:
-
-- MovieId
-- Title
-- Description
-- DurationMinutes
-- ReleaseDate
-- Language
-- Genre
-- Shows
-
-#### 2. Theatre.cs
-
-Stores theatre information.
-
-Properties include:
-
-- TheatreId
-- Name
-- Location
-- Screens
-
-#### 3. Screen.cs
-
-Represents a screen belonging to a theatre.
-
-Properties include:
-
-- ScreenId
-- TheatreId
-- ScreenName
-- Theatre
-- Seats
-- Shows
-
-#### 4. Seat.cs
-
-Represents a physical seat belonging to a screen.
-
-Properties include:
-
-- SeatId
-- ScreenId
-- RowName
-- SeatNumber
-- SeatType
-- Screen
-- ShowSeats
-- BookingSeats
-
-#### 5. Show.cs
-
-Represents a scheduled movie show.
-
-Properties include:
-
-- ShowId
-- MovieId
-- ScreenId
-- StartTime
-- EndTime
-- TicketPrice
-- Movie
-- Screen
-- ShowSeats
-- Bookings
-
-#### 6. ShowSeat.cs
-
-Tracks the availability of a physical seat for a particular show.
-
-Properties include:
-
-- ShowSeatId
-- ShowId
-- SeatId
-- Status
-- Show
-- Seat
-
-The default status is `Available`.
-
-#### 7. Booking.cs
-
-Stores customer booking information.
-
-Properties include:
-
-- BookingId
-- BookingReference
-- ShowId
-- CustomerName
-- CustomerEmail
-- CustomerPhone
-- BookingDate
-- TotalAmount
-- Status
-- Show
-- BookingSeats
-
-The default booking status is `Confirmed`.
-
-#### 8. BookingSeat.cs
-
-Stores the seats included in a booking.
-
-Properties include:
-
-- BookingSeatId
-- BookingId
-- SeatId
-- Price
-- Booking
-- Seat
-
-### ApplicationDbContext.cs
-
-Created the DbContext inside the Data folder.
+Created `ApplicationDbContext.cs`.
 
 Configured:
 
-- Eight DbSet properties.
-- Primary key relationships.
-- One-to-many relationships.
+- DbSet properties.
+- Primary keys.
+- Entity relationships.
+- Required properties.
+- Maximum string lengths.
 - Unique indexes.
 - Check constraints.
-- Decimal precision for monetary values.
-- Required properties and maximum string lengths.
-- Restrictive delete behaviour for dependent records.
-
-### Important Constraints
-
-- Screen name must be unique within a theatre.
-- Row name and seat number must be unique within a screen.
-- ShowSeat must be unique for each ShowId and SeatId combination.
-- BookingReference must be unique.
-- Show EndTime must be greater than StartTime.
-- TicketPrice and booking amounts must not be negative.
-- BookingSeat price must not be negative.
+- Decimal precision.
+- Delete behaviours.
 
 ### Result
 
-All eight entities and their database relationships were defined.
+The database entity structure and DbContext configuration were completed.
 
 ---
 
-# Commit 3 – Database Creation Using EF Core Migrations
+## Commit 3 – Database Creation Using EF Core Migrations
 
-**Commit message:**
+**Commit Hash:** `3458c17`
+
+**Commit Message:**
 
 ```text
 feat: create database using ef core migrations
@@ -237,63 +112,34 @@ feat: create database using ef core migrations
 
 ### Objective
 
-Create the SQL Server database using the entity models and DbContext configuration.
+Create the SQL Server database using Entity Framework Core migrations.
 
-### Changes Made
+### Work Completed
 
-1. Installed the EF Core command-line tool if required.
-2. Generated the initial migration.
-3. Applied the migration to SQL Server.
-4. Verified the created database and tables.
+- Configured the SQL Server connection string.
+- Created the initial migration named `InitialCreate`.
+- Applied the migration using Entity Framework Core.
+- Created the database and its tables.
+- Verified the database structure.
 
 ### Commands Used
 
-Install the EF Core tool if it is not already installed:
-
-```powershell
-dotnet tool install --global dotnet-ef --version 10.0.14
-```
-
-Create the migration:
-
 ```powershell
 dotnet ef migrations add InitialCreate
-```
-
-Apply the migration:
-
-```powershell
 dotnet ef database update
 ```
 
-### Database Created
-
-```text
-MovieTicketBookingDB
-```
-
-### Tables Created
-
-1. Movies
-2. Theatres
-3. Screens
-4. Seats
-5. Shows
-6. ShowSeats
-7. Bookings
-8. BookingSeats
-
-The migration history is maintained in `__EFMigrationsHistory`.
-
 ### Result
 
-The database schema was generated from the EF Core models and configured successfully.
+The database was created successfully using EF Core migrations.
 
 ---
 
-# Commit 4 – Movie CRUD APIs
+## Commit 4 – Movie CRUD APIs
 
-**Commit message:**
+**Commit Hash:** `331cc9c`
+
+**Commit Message:**
 
 ```text
 feat: implement movie CRUD APIs
@@ -301,92 +147,44 @@ feat: implement movie CRUD APIs
 
 ### Objective
 
-Implement the complete movie management functionality using the Controller, Service and Repository layers.
+Implement the movie management functionality.
 
-### Changes Made
+### Work Completed
 
-#### 1. Movie DTOs
-
-Created:
-
-- `CreateMovieRequest.cs`
-- `UpdateMovieRequest.cs`
-- `MovieResponse.cs`
-- `PagedResult.cs`
-
-Added request validation attributes such as:
-
-- Required
-- StringLength
-- Range
-
-#### 2. Movie Repository
-
-Created:
-
-- `IMovieRepository.cs`
-- `MovieRepository.cs`
-
-Implemented database operations:
-
-- Retrieve all movies.
-- Retrieve movies using pagination.
-- Retrieve a movie by ID.
-- Add a movie.
-- Update a movie.
-- Delete a movie.
-- Search movies by title.
-- Check whether a movie has dependent shows.
-
-Used asynchronous EF Core methods.
-
-#### 3. Movie Service
-
-Created:
-
-- `IMovieService.cs`
-- `MovieService.cs`
+Created the movie request and response DTOs.
 
 Implemented:
 
-- Business logic.
-- DTO mapping.
-- Movie creation.
-- Movie retrieval.
-- Movie update.
-- Movie search.
-- Movie deletion validation.
+- Create movie.
+- Retrieve all movies.
+- Retrieve movie by ID.
+- Update movie.
+- Delete movie.
+- Search movies by title.
+- Pagination.
+- Title filtering.
 
-Movie deletion is prevented if dependent shows exist.
+Created:
 
-#### 4. MoviesController
+- `IMovieRepository`
+- `MovieRepository`
+- `IMovieService`
+- `MovieService`
+- `MoviesController`
 
-Created endpoints for movie management.
-
-| Method | Endpoint | Function |
-|---|---|---|
-| POST | `/api/movies` | Create movie |
-| GET | `/api/movies` | Get paginated movies |
-| GET | `/api/movies/{id}` | Get movie by ID |
-| PUT | `/api/movies/{id}` | Update movie |
-| DELETE | `/api/movies/{id}` | Delete movie |
-| GET | `/api/movies/search?title=leo` | Search by title |
-
-The GET endpoint supports `pageNumber`, `pageSize`, and an optional title filter.
-
-### Dependency Injection
-
-Registered the movie repository and service in Program.cs.
+Added validation to prevent deleting movies that have dependent shows.
 
 ### Result
 
-Movie CRUD operations, pagination, search and dependency validation were implemented.
+Movie management APIs were implemented using the Controller-Service-Repository flow.
 
 ---
 
-# Commit 5 – Theatre and Screen APIs
+## Commit 5 – Theatre and Screen APIs
 
-**Commit message:**
+**Commit Hash:** `e6dc6d6`
+
+**Commit Message:**
 
 ```text
 feat: implement theatre and screen APIs
@@ -396,95 +194,55 @@ feat: implement theatre and screen APIs
 
 Implement theatre and screen management functionality.
 
-### Changes Made
+### Work Completed
 
-#### 1. Theatre DTOs
+Created theatre and screen DTOs.
 
-Created:
+Implemented Theatre APIs:
 
-- `CreateTheatreRequest.cs`
-- `UpdateTheatreRequest.cs`
-- `TheatreResponse.cs`
-
-#### 2. Screen DTOs
-
-Created:
-
-- `CreateScreenRequest.cs`
-- `UpdateScreenRequest.cs`
-- `ScreenResponse.cs`
-
-#### 3. Theatre Repository
-
-Created:
-
-- `ITheatreRepository.cs`
-- `TheatreRepository.cs`
-
-Implemented:
-
+- Create theatre.
 - Retrieve all theatres.
 - Retrieve theatre by ID.
-- Add theatre.
 - Update theatre.
 - Delete theatre.
-- Check whether a theatre has screens.
 
-#### 4. Screen Repository
+Implemented Screen APIs:
 
-Created:
-
-- `IScreenRepository.cs`
-- `ScreenRepository.cs`
-
-Implemented:
-
+- Create screen.
 - Retrieve all screens.
-- Filter screens by theatre.
 - Retrieve screen by ID.
-- Check theatre existence.
-- Check duplicate screen names.
-- Add screen.
+- Retrieve screens by theatre.
 - Update screen.
 - Delete screen.
-- Check whether seats or shows depend on a screen.
-
-#### 5. Services
 
 Created:
 
-- `ITheatreService.cs`
-- `TheatreService.cs`
-- `IScreenService.cs`
-- `ScreenService.cs`
+- `ITheatreRepository`
+- `TheatreRepository`
+- `IScreenRepository`
+- `ScreenRepository`
+- `ITheatreService`
+- `TheatreService`
+- `IScreenService`
+- `ScreenService`
+- `TheatresController`
+- `ScreensController`
 
-Implemented business validation.
+Added validation for duplicate screen names within the same theatre.
 
-Examples:
-
-- A screen cannot be created for a nonexistent theatre.
-- Duplicate screen names within a theatre are prevented.
-- A theatre cannot be deleted when screens exist.
-- A screen cannot be deleted when seats or shows depend on it.
-
-#### 6. Controllers
-
-Created:
-
-- `TheatresController.cs`
-- `ScreensController.cs`
-
-Implemented CRUD endpoints and screen retrieval by theatre.
+Added restrictions to prevent deleting theatres or screens that have dependent records.
 
 ### Result
 
-Theatre and screen management functionality was implemented with validation and dependency checks.
+Theatre and screen management functionality was completed.
 
 ---
 
-# Commit 6 – Seat APIs and Bulk Seat Creation
+## Commit 6 – Seat APIs and Bulk Seat Creation
 
-**Commit message:**
+**Commit Hash:** `cba0f2c`
+
+**Commit Message:**
 
 ```text
 feat: implement seat APIs and bulk seat creation
@@ -492,82 +250,50 @@ feat: implement seat APIs and bulk seat creation
 
 ### Objective
 
-Implement physical seat management and support creating multiple seats in one request.
+Implement physical seat management for screens.
 
-### Changes Made
+### Work Completed
 
-#### 1. Seat DTOs
+Created seat DTOs:
 
-Created:
-
-- `CreateSeatRequest.cs`
-- `UpdateSeatRequest.cs`
-- `BulkCreateSeatsRequest.cs`
-- `CreateSeatItemRequest.cs`
-- `SeatResponse.cs`
-
-The bulk request contains a ScreenId and a collection of seat details.
-
-#### 2. Seat Repository
-
-Created:
-
-- `ISeatRepository.cs`
-- `SeatRepository.cs`
+- CreateSeatRequest
+- UpdateSeatRequest
+- BulkCreateSeatsRequest
+- CreateSeatItemRequest
+- SeatResponse
 
 Implemented:
 
+- Create individual seat.
+- Bulk-create seats.
 - Retrieve seats by screen.
 - Retrieve seat by ID.
-- Check screen existence.
-- Check duplicate seat coordinates.
-- Add a seat.
-- Add multiple seats.
-- Update a seat.
-- Delete a seat.
-- Check whether bookings or show-seat records depend on a seat.
-
-#### 3. Seat Service
+- Update seat.
+- Delete seat.
 
 Created:
 
-- `ISeatService.cs`
-- `SeatService.cs`
+- `ISeatRepository`
+- `SeatRepository`
+- `ISeatService`
+- `SeatService`
+- `SeatsController`
 
-Implemented:
+Added validation to prevent duplicate seat coordinates within a screen.
 
-- Validate screen existence.
-- Validate duplicate seat coordinates.
-- Validate duplicate entries within a bulk request.
-- Create an individual seat.
-- Create multiple seats.
-- Update seat information.
-- Prevent unsafe changes to seat coordinates after show or booking references exist.
-- Prevent deletion when dependent records exist.
-- Map entity models to response DTOs.
-
-#### 4. SeatsController
-
-Created endpoints:
-
-| Method | Endpoint | Function |
-|---|---|---|
-| POST | `/api/seats` | Create one seat |
-| POST | `/api/seats/bulk` | Create multiple seats |
-| GET | `/api/seats/screen/{screenId}` | Get seats by screen |
-| GET | `/api/seats/{id}` | Get seat by ID |
-| PUT | `/api/seats/{id}` | Update seat |
-| DELETE | `/api/seats/{id}` | Delete seat |
+Added restrictions for updating or deleting seats that have dependent show-seat or booking records.
 
 ### Result
 
-Physical seat management and bulk seat creation were implemented.
+Seat management APIs and bulk seat creation were implemented.
 
 ---
 
-# Commit 7 – Show Scheduling and Validation
+## Commit 7 – Show Scheduling and Validation
 
-**Commit message:**
+**Commit Hash:** `01b320a`
+
+**Commit Message:**
 
 ```text
 feat: implement show scheduling and validation
@@ -575,106 +301,52 @@ feat: implement show scheduling and validation
 
 ### Objective
 
-Implement movie show scheduling and validate show details before saving them.
+Implement movie show scheduling and its business validations.
 
-### Changes Made
+### Work Completed
 
-#### 1. Show DTOs
-
-Created:
-
-- `CreateShowRequest.cs`
-- `UpdateShowRequest.cs`
-- `ShowResponse.cs`
-
-The request DTOs contain:
-
-- MovieId
-- ScreenId
-- StartTime
-- EndTime
-- TicketPrice
-
-#### 2. Show Repository
-
-Created:
-
-- `IShowRepository.cs`
-- `ShowRepository.cs`
+Created show request and response DTOs.
 
 Implemented:
 
+- Create show.
 - Retrieve all shows.
 - Retrieve show by ID.
 - Retrieve shows by movie.
 - Retrieve shows by theatre.
-- Retrieve shows by date.
-- Check movie existence.
-- Check screen existence.
-- Check overlapping shows.
-- Check show dependencies.
-- Add show.
+- Search shows by date.
 - Update show.
 - Delete show.
 
-#### 3. Show Overlap Validation
-
-Implemented overlap checking for shows scheduled on the same screen.
-
-The repository checks:
-
-```csharp
-return await _context.Shows.AnyAsync(s =>
-    s.ScreenId == screenId &&
-    s.ShowId != excludeShowId &&
-    startTime < s.EndTime &&
-    endTime > s.StartTime);
-```
-
-This prevents overlapping show schedules on the same screen.
-
-#### 4. Show Service
-
 Created:
 
-- `IShowService.cs`
-- `ShowService.cs`
+- `IShowRepository`
+- `ShowRepository`
+- `IShowService`
+- `ShowService`
+- `ShowsController`
 
-Implemented:
+Added validations:
 
-- Validate show time.
-- Validate ticket price.
-- Check movie existence.
-- Check screen existence.
-- Prevent overlapping shows.
-- Map show information into response DTOs.
-- Prevent changing the screen after dependent show-seat or booking records exist.
-- Prevent deleting shows with dependent records.
+- Movie must exist.
+- Screen must exist.
+- End time must be later than start time.
+- Ticket price cannot be negative.
+- Shows must not overlap on the same screen.
 
-#### 5. ShowsController
-
-Implemented:
-
-| Method | Endpoint | Function |
-|---|---|---|
-| POST | `/api/shows` | Create show |
-| GET | `/api/shows` | Get shows with optional filters |
-| GET | `/api/shows/{id}` | Get show by ID |
-| GET | `/api/shows/movie/{movieId}` | Get shows by movie |
-| GET | `/api/shows/theatre/{theatreId}` | Get shows by theatre |
-| GET | `/api/shows/search?date=YYYY-MM-DD` | Search shows by date |
-| PUT | `/api/shows/{id}` | Update show |
-| DELETE | `/api/shows/{id}` | Delete show |
+Added restrictions for changing or deleting shows that have dependent records.
 
 ### Result
 
-Show scheduling, filtering and overlap validation were implemented.
+Show scheduling and validation functionality was completed.
 
 ---
 
-# Commit 8 and 9 – Show Seat Availability and Booking Creation
+## Commit 8 – Show Seat Availability and Booking Creation
 
-**Combined commit message:**
+**Commit Hash:** `d1494f5`
+
+**Commit Message:**
 
 ```text
 feat: implement show seat availability and booking creation
@@ -682,154 +354,70 @@ feat: implement show seat availability and booking creation
 
 ### Objective
 
-Generate show-specific seat records, provide seat availability APIs and implement customer booking creation.
+Implement show-specific seat availability and booking creation.
 
-The original ShowSeat and Booking Creation tasks were combined into one commit.
+### Work Completed
 
-## Part A – ShowSeat Generation
+### Show Seat Availability
 
-### Changes Made
+Updated the show repository and service to generate ShowSeat records when a show is created.
 
-Extended the show repository with a method to retrieve all physical seats belonging to a screen.
+For every physical seat configured for the screen:
 
-Added the method:
+- A ShowSeat record is created.
+- The initial status is set to `Available`.
 
-```csharp
-Task<List<Seat>> GetSeatsByScreenIdAsync(int screenId);
-```
+Added ShowSeat functionality to retrieve:
 
-Updated `ShowService.AddShowAsync()`.
-
-After validating the show details:
-
-1. Retrieve all physical seats belonging to the selected screen.
-2. Check whether the screen contains seats.
-3. Generate one ShowSeat record for every physical seat.
-4. Set every generated ShowSeat status to `Available`.
-5. Save the show and its ShowSeat records.
-
-This means every show has its own independent seat availability records.
-
-## Part B – ShowSeat APIs
+- All seats for a show.
+- Available seats.
+- Booked seats.
 
 Created:
 
-- `ShowSeatResponse.cs`
-- `IShowSeatRepository.cs`
-- `ShowSeatRepository.cs`
-- `IShowSeatService.cs`
-- `ShowSeatService.cs`
-- `ShowSeatsController.cs`
+- `ShowSeatResponse`
+- ShowSeat repository.
+- ShowSeat service.
+- ShowSeatsController.
+
+### Booking Creation
+
+Created booking request and response DTOs.
 
 Implemented:
 
-- Retrieve all seats for a show.
-- Retrieve available seats.
-- Retrieve booked seats.
-- Map seat details into ShowSeatResponse.
-
-The response includes:
-
-- SeatId
-- RowName
-- SeatNumber
-- SeatLabel
-- SeatType
-- Price
-- Status
-
-### Endpoints
-
-| Method | Endpoint | Function |
-|---|---|---|
-| GET | `/api/shows/{showId}/seats` | Get all seats |
-| GET | `/api/shows/{showId}/seats/available` | Get available seats |
-| GET | `/api/shows/{showId}/seats/booked` | Get booked seats |
-
-## Part C – Booking Creation
-
-### Booking DTOs
-
-Created:
-
-- `CreateBookingRequest.cs`
-- `BookingResponse.cs`
-
-The booking request accepts:
-
-- CustomerName
-- CustomerEmail
-- CustomerPhone
-- ShowId
-- SeatIds
-
-### Booking Repository
-
-Created:
-
-- `IBookingRepository.cs`
-- `BookingRepository.cs`
-
-Implemented booking creation.
-
-The repository:
-
-1. Begins a database transaction.
-2. Retrieves the show and selected ShowSeat records.
-3. Verifies that all requested seats belong to the show.
-4. Checks that the selected seats are available.
-5. Calculates the total amount using the show ticket price.
-6. Creates the Booking entity.
-7. Creates the BookingSeat entities.
-8. Changes selected ShowSeat statuses to `Booked`.
-9. Saves all changes.
-10. Commits the transaction.
-
-### Booking Service
-
-Created:
-
-- `IBookingService.cs`
-- `BookingService.cs`
-
-Implemented:
-
-- Show existence validation.
-- Seat selection validation.
-- Duplicate seat ID validation.
+- Booking creation.
+- Seat validation.
+- Duplicate seat validation.
+- Show and seat relationship validation.
+- Seat availability validation.
+- Total booking amount calculation.
 - Booking reference generation.
-- Booking entity creation.
-- Booking response mapping.
+- Booking record creation.
+- BookingSeat record creation.
+- ShowSeat status update.
 
-The booking reference is generated by the application.
+Created:
 
-The booking total is calculated on the server:
+- `IBookingRepository`
+- `BookingRepository`
+- `IBookingService`
+- `BookingService`
+- `BookingsController`
 
-```text
-Total Amount = Ticket Price × Number of Selected Seats
-```
-
-### BookingsController
-
-Added:
-
-```text
-POST /api/bookings
-```
-
-The endpoint creates a booking and returns the created booking response.
+Used a database transaction to ensure that the booking and seat availability changes are saved together.
 
 ### Result
 
-ShowSeat generation, seat availability retrieval and booking creation were implemented.
-
-Booking creation uses a database transaction to keep the booking, booking-seat and show-seat updates together.
+Show seat availability and booking creation functionality were implemented.
 
 ---
 
-# Commit 10 – Booking Retrieval and Cancellation
+## Commit 9 – Booking Retrieval and Cancellation
 
-**Commit message:**
+**Commit Hash:** `872893d`
+
+**Commit Message:**
 
 ```text
 feat: implement booking retrieval and cancellation
@@ -837,114 +425,41 @@ feat: implement booking retrieval and cancellation
 
 ### Objective
 
-Extend the booking functionality to retrieve booking records and cancel confirmed bookings.
+Implement booking retrieval and cancellation functionality.
 
-### Changes Made
+### Work Completed
 
-## 1. Updated BookingResponse
-
-Expanded the response DTO to include:
-
-- BookingId
-- BookingReference
-- ShowId
-- CustomerName
-- CustomerEmail
-- CustomerPhone
-- BookingDate
-- TotalAmount
-- Status
-- Seats
-
-## 2. Updated Booking Repository
-
-Extended:
-
-- `IBookingRepository.cs`
-- `BookingRepository.cs`
-
-Added the following operations:
-
-```csharp
-Task<List<Booking>> GetAllAsync(int? showId, string? status);
-
-Task<Booking?> GetByIdAsync(int bookingId);
-
-Task<List<Booking>> GetByShowIdAsync(int showId);
-
-Task<Booking> CancelBookingAsync(int bookingId);
-```
-
-### Booking Retrieval
+Updated the BookingResponse DTO with booking and seat information.
 
 Implemented:
 
 - Retrieve all bookings.
-- Filter bookings by show ID.
-- Filter bookings by booking status.
-- Retrieve a booking by ID.
-- Retrieve all bookings for a particular show.
-
-BookingSeat and Seat information is included when retrieving bookings.
-
-### Booking Cancellation
-
-Implemented cancellation using a database transaction.
-
-The cancellation process:
-
-1. Begins a database transaction.
-2. Retrieves the booking and its associated BookingSeat records.
-3. Checks whether the booking exists.
-4. Checks whether the booking status is `Confirmed`.
-5. Changes the booking status to `Cancelled`.
-6. Retrieves the associated ShowSeat records.
-7. Changes their status back to `Available`.
-8. Saves the changes.
-9. Commits the transaction.
-10. Returns the updated booking.
-
-Cancelled bookings are preserved for historical reference.
-
-## 3. Updated Booking Service
-
-Extended:
-
-- `IBookingService.cs`
-- `BookingService.cs`
-
-Added:
-
-- Retrieve all bookings.
 - Retrieve booking by ID.
-- Retrieve bookings by show ID.
+- Retrieve bookings by show.
 - Cancel booking.
-- Map booking entities to BookingResponse.
 
-## 4. Updated BookingsController
+Cancellation process:
 
-Added endpoints:
+1. Retrieve the booking.
+2. Check whether the booking exists.
+3. Check whether the booking is confirmed.
+4. Change booking status to `Cancelled`.
+5. Change associated ShowSeat statuses to `Available`.
+6. Save the changes inside a database transaction.
 
-| Method | Endpoint | Function |
-|---|---|---|
-| GET | `/api/bookings` | Retrieve bookings |
-| GET | `/api/bookings/{id}` | Retrieve booking by ID |
-| GET | `/api/bookings/show/{showId}` | Retrieve bookings by show |
-| PUT | `/api/bookings/{id}/cancel` | Cancel booking |
-
-The existing POST booking endpoint was retained.
+Booking and BookingSeat records are preserved for historical reference.
 
 ### Result
 
 Booking retrieval and cancellation functionality were implemented.
 
-The system now releases seats when a confirmed booking is cancelled, without deleting the booking history.
-
 ---
 
-# Commit 11 – Global Exception Handling and Final Validation
+## Commit 10 – Global Exception Handling and Final Validation
 
-**Commit message:**
+**Commit Hash:** `b4021f7`
+
+**Commit Message:**
 
 ```text
 feat: add global exception handling and final validation
@@ -952,198 +467,369 @@ feat: add global exception handling and final validation
 
 ### Objective
 
-Add centralized exception handling and perform final integration testing of the application.
+Implement centralized exception handling for the application.
 
-### Changes Made
+### Work Completed
 
-## 1. GlobalExceptionHandler.cs
+Created:
 
-Created the Middleware folder and added:
+`Middleware/GlobalExceptionHandler.cs`
 
-```text
-Middleware/GlobalExceptionHandler.cs
-```
+Implemented the `IExceptionHandler` interface.
 
-The class implements:
+Used:
 
-```csharp
-IExceptionHandler
-```
+- IExceptionHandler
+- ProblemDetails
+- IProblemDetailsService
+- ILogger
 
-It handles unhandled application exceptions centrally.
-
-### Exception Mapping
+Configured exception mappings:
 
 | Exception | HTTP Status |
 |---|---|
 | KeyNotFoundException | 404 Not Found |
 | ArgumentException | 400 Bad Request |
 | InvalidOperationException | 409 Conflict |
-| Unexpected exceptions | 500 Internal Server Error |
+| Other unexpected exceptions | 500 Internal Server Error |
 
-### Problem Details
+Registered centralized exception handling in Program.cs.
 
-Used `ProblemDetails` to return structured error responses.
-
-The response contains:
-
-- Status
-- Title
-- Detail
-- Instance
-
-Unexpected exceptions are logged using `ILogger`.
-
-Internal exception details are not returned to the client for unexpected server errors.
-
-### 2. Program.cs Updates
-
-Registered:
-
-```csharp
-builder.Services.AddProblemDetails();
-
-builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
-```
-
-Configured the middleware:
-
-```csharp
-app.UseExceptionHandler();
-```
-
-This enables centralized exception handling for unhandled exceptions.
-
-### 3. Final Build and Integration Testing
-
-The final validation stage includes:
-
-- Building the application.
-- Testing movie creation and retrieval.
-- Testing theatre and screen creation.
-- Testing individual and bulk seat creation.
-- Testing show scheduling.
-- Testing show overlap validation.
-- Verifying ShowSeat generation.
-- Checking available and booked seats.
-- Testing booking creation.
-- Checking booking amount calculation.
-- Testing booking retrieval.
-- Testing booking cancellation.
-- Verifying that cancelled seats become available again.
-- Testing invalid requests and missing records.
+Updated the HTTP request pipeline to use the exception handler.
 
 ### Result
 
-Centralized exception handling was added, and the application was prepared for end-to-end validation.
+Centralized exception handling was implemented to provide consistent API error responses.
 
 ---
 
-# Overall Development Summary
+## Commit 11 – Program.cs Update
 
-The project was developed through 11 planned commits.
+**Commit Hash:** `2e16419`
 
-| Commit | Feature | Main Deliverables |
-|---|---|---|
-| 1 | Project Setup | .NET Web API, packages, configuration |
-| 2 | Models and DbContext | Eight entity models and relationships |
-| 3 | Database Creation | EF Core migration and SQL Server database |
-| 4 | Movie APIs | Movie CRUD, search and pagination |
-| 5 | Theatre and Screen APIs | Theatre and screen CRUD |
-| 6 | Seat APIs | Seat CRUD and bulk seat creation |
-| 7 | Show APIs | Show scheduling, filtering and overlap validation |
-| 8 + 9 | ShowSeats and Booking Creation | Seat generation, availability and booking |
-| 10 | Booking Retrieval and Cancellation | Booking queries and cancellation |
-| 11 | Final Validation | Global exception handling and integration testing |
-
-## Important Implementation Concepts
-
-### Layered Architecture
-
-The application separates responsibilities into four main layers:
+**Commit Message:**
 
 ```text
-Client
-  |
-  v
-Controller
-  |
-  v
-Service
-  |
-  v
-Repository
-  |
-  v
-ApplicationDbContext
-  |
-  v
-SQL Server
+update:program.cs
 ```
 
-### Dependency Injection
+### Objective
 
-Repository and service implementations are registered in Program.cs using `AddScoped()`.
+Update the application startup configuration.
 
-Controllers depend on service interfaces, and services depend on repository interfaces.
+### Work Completed
 
-### Entity Framework Core
+Updated the Program.cs application configuration as part of the integration and startup changes following exception handling.
 
-EF Core is used for:
+Program.cs is responsible for configuring the application services and HTTP request pipeline.
 
-- Database communication.
-- Entity relationships.
-- CRUD operations.
-- Filtering and searching.
-- Asynchronous queries.
-- Database migrations.
-- Transactions.
+### Result
 
-### DTO Mapping
+The Program.cs changes were committed separately.
 
-Request DTOs receive client data, while response DTOs control the information returned by the API.
+---
 
-Services perform the mapping between entities and response DTOs.
+## Commit 12 – JWT Authentication
 
-### Database Transactions
+**Commit Hash:** `25a2410`
 
-Transactions are used for multi-step booking operations.
+**Commit Message:**
 
-This ensures that the booking, booking-seat records and seat availability updates are committed together.
+```text
+JWT Authentication added
+```
 
-Transactions are also used during cancellation to update the booking and release the associated seats together.
+### Objective
 
-### Business Validation
+Implement user registration, login and JWT token authentication.
 
-The application includes validations for:
+### Work Completed
 
-- Duplicate movie-independent identifiers and unique database fields.
-- Theatre and screen relationships.
-- Duplicate seat coordinates.
-- Show scheduling conflicts.
-- Seat availability.
-- Duplicate seat selections.
-- Booking cancellation rules.
-- Unsafe deletion of records with dependent data.
+Added the User model to store registered user information.
 
-## Current Project Scope
+Created authentication DTOs:
 
-The completed Version 1 implementation focuses on backend API functionality.
+- RegisterDto
+- LoginDto
 
-It does not include:
+Implemented user repository and service functionality.
 
-- Authentication.
-- Authorization.
-- JWT.
-- Payment gateway.
-- Frontend UI.
-- Email notifications.
-- SMS notifications.
+Created:
 
-## Final Conclusion
+- IUserRepository
+- UserRepository
+- IUserService
+- UserService
+- IJwtService
+- JwtService
+- AuthController
 
-The Movie Ticket Booking System was developed incrementally using ASP.NET Core Web API, Entity Framework Core and SQL Server.
+Implemented registration:
 
-The implementation covers the complete backend workflow, beginning with movie and theatre management and continuing through show scheduling, seat availability, booking creation, booking retrieval and cancellation.
+1. Receive user registration details.
+2. Check whether the email already exists.
+3. Hash the password using PasswordHasher.
+4. Save the user in the database.
 
-The project demonstrates layered architecture, dependency injection, repository and service patterns, DTO mapping, database relationships, validation, EF Core migrations, asynchronous operations and database transactions.
+Implemented login:
+
+1. Receive email and password.
+2. Retrieve the user by email.
+3. Verify the password hash.
+4. Generate a JWT token when credentials are valid.
+5. Return the token to the client.
+
+Configured JWT Bearer authentication in Program.cs.
+
+Configured token validation for:
+
+- Issuer.
+- Audience.
+- Token lifetime.
+- Signing key.
+
+Added the Users table through an EF Core migration.
+
+Configured the JWT signing key using .NET User Secrets instead of committing it to the repository.
+
+### Result
+
+User registration, login and JWT authentication were implemented.
+
+---
+
+## Commit 13 – Role-Based Authorization
+
+**Commit Hash:** `cccb2e9`
+
+**Commit Message:**
+
+```text
+feat : Rolebased authorization added
+```
+
+### Objective
+
+Implement role-based authorization for Admin and Customer users.
+
+### Work Completed
+
+Created:
+
+`Constants/UserRoles.cs`
+
+Defined two application roles:
+
+- Admin
+- Customer
+
+Updated the User model to include a Role property.
+
+Updated user registration so that newly registered users automatically receive the Customer role.
+
+Updated JWT generation to include the user's role as a claim.
+
+Configured role-based authorization using the `[Authorize(Roles = ...)]` attribute.
+
+Implemented role restrictions:
+
+**Admin**
+
+- Create, update and delete movies.
+- Manage theatres.
+- Manage screens.
+- Manage seats.
+- Manage shows.
+- Retrieve bookings.
+- Cancel bookings.
+
+**Customer**
+
+- Register and log in.
+- View movies.
+- View theatres.
+- View screens.
+- View seats.
+- View shows.
+- View show seat availability.
+- Create bookings.
+
+Authentication endpoints remain publicly accessible using `[AllowAnonymous]`.
+
+### Result
+
+Role-based authorization was implemented using Admin and Customer roles.
+
+---
+
+## Commit 14 – Admin User Seeding Using User Secrets
+
+**Commit Hash:** `4f4b2c0`
+
+**Commit Message:**
+
+```text
+feat: implement admin user seeding using user secrets
+```
+
+### Objective
+
+Automatically create an initial Admin account when the application starts in the Development environment.
+
+### Work Completed
+
+Created:
+
+`Data/RoleSeeder.cs`
+
+Implemented the Admin seeding process.
+
+The seeder:
+
+1. Reads the Admin password from User Secrets.
+2. Checks whether the Admin account already exists.
+3. Creates the Admin account if it does not exist.
+4. Hashes the password using PasswordHasher.
+5. Assigns the Admin role.
+6. Saves the account in the Users table.
+
+Configured the Admin password using:
+
+```powershell
+dotnet user-secrets set "SeedUsers:AdminPassword" "YourAdminPassword"
+```
+
+The seeded Admin account uses:
+
+- Email: `admin@moviebooking.com`
+- Role: `Admin`
+
+Updated Program.cs to call the seeder during application startup in the Development environment.
+
+The seeder checks for an existing Admin account to prevent duplicate records during repeated application startup.
+
+No additional database migration was required because the Users table and Role column already existed.
+
+### Result
+
+Admin account seeding was implemented using .NET User Secrets and password hashing.
+
+---
+
+## Current Project Features
+
+The project currently includes:
+
+### Movie Management
+
+- Create movies.
+- Retrieve movies.
+- Update movies.
+- Delete movies.
+- Search movies.
+- Pagination.
+
+### Theatre and Screen Management
+
+- Create theatres.
+- Retrieve theatres.
+- Update theatres.
+- Delete theatres.
+- Create screens.
+- Retrieve screens.
+- Update screens.
+- Delete screens.
+
+### Seat Management
+
+- Create individual seats.
+- Bulk-create seats.
+- Retrieve seats.
+- Update seats.
+- Delete seats.
+
+### Show Management
+
+- Schedule shows.
+- Retrieve shows.
+- Update shows.
+- Delete shows.
+- Validate show timings.
+- Prevent overlapping shows.
+
+### Show Seat Availability
+
+- Generate ShowSeat records when creating shows.
+- Retrieve all show seats.
+- Retrieve available seats.
+- Retrieve booked seats.
+
+### Booking Management
+
+- Create bookings.
+- Validate selected seats.
+- Calculate booking amounts.
+- Update seat availability.
+- Retrieve bookings.
+- Cancel bookings.
+- Preserve cancelled booking history.
+- Use database transactions for booking operations.
+
+### Authentication and Authorization
+
+- User registration.
+- User login.
+- Password hashing.
+- JWT token generation.
+- JWT token validation.
+- Admin role.
+- Customer role.
+- Role-based API authorization.
+- Admin user seeding using User Secrets.
+
+### Exception Handling
+
+- Centralized exception handling.
+- Consistent ProblemDetails responses.
+- Exception logging.
+- HTTP status mapping.
+
+---
+
+## Git Commit History
+
+The following is the commit history provided for the project:
+
+```text
+4f4b2c0 feat: implement admin user seeding using user secrets
+cccb2e9 feat : Rolebased authorization added
+25a2410 JWT Authentication added
+948fa62 docs and readme added
+2e16419 update:program.cs
+b4021f7 feat: add global exception handling and final validation
+872893d feat: implement booking retrieval and cancellation
+d1494f5 feat: implement show seat availability and booking creation
+01b320a feat: implement show scheduling and validation
+cba0f2c feat: implement seat APIs and bulk seat creation
+e6dc6d6 feat: implement theatre and screen APIs
+331cc9c feat: implement movie CRUD APIs
+3458c17 feat: create database using ef core migrations
+7493dc1 feat: add movie booking models and dbcontext
+cef693f chore: initialize movie ticket booking web api
+```
+
+---
+
+## Current Scope and Future Enhancements
+
+The current project focuses on backend API functionality, database operations, authentication and authorization.
+
+Features not currently included:
+
+- Theatre Manager role.
+- Frontend application.
+- Online payment gateway integration.
+- Email or SMS notifications.
+- Customer-specific booking ownership and cancellation authorization.
+
+These can be considered for future development.

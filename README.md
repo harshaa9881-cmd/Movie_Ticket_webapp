@@ -6,13 +6,22 @@ The **Movie Ticket Booking System** is an ASP.NET Core Web API application devel
 
 The application provides APIs to manage movies, theatres, screens, seats, shows, and customer bookings.
 
-Customers can view available shows, check seat availability, book seats, retrieve booking details, and cancel bookings. The system automatically updates seat availability when a booking is created or cancelled.
+Customers can view available movies and shows, check seat availability, book seats, retrieve booking details, and cancel bookings. The system automatically updates seat availability when a booking is created or cancelled.
+
+The application also implements JWT authentication and role-based authorization with two roles:
+
+- **Admin:** Manages movies, theatres, screens, seats, and shows.
+- **Customer:** Registers, logs in, views available information, and creates bookings.
+
+An Admin account is automatically created using the user seeding process when the application starts in the Development environment.
 
 The project follows a layered architecture:
 
 **Controller → Service → Repository → DbContext → SQL Server**
 
 Each layer has a separate responsibility, making the application easier to maintain and understand.
+
+---
 
 ## Technologies Used
 
@@ -22,17 +31,25 @@ Each layer has a separate responsibility, making the application easier to maint
 - Entity Framework Core 10
 - SQL Server Express
 - LINQ
+- JWT Bearer Authentication
+- ASP.NET Core PasswordHasher
+- User Secrets
 - Visual Studio
 - Scalar / OpenAPI
-- Swagger-compatible API documentation
 - Git and GitHub
+
+---
 
 ## Project Structure
 
 ```text
 MovieTicketBooking/
 │
+├── Constants/
+│   └── UserRoles.cs
+│
 ├── Controllers/
+│   ├── AuthController.cs
 │   ├── MoviesController.cs
 │   ├── TheatresController.cs
 │   ├── ScreensController.cs
@@ -49,9 +66,13 @@ MovieTicketBooking/
 │   ├── Show.cs
 │   ├── ShowSeat.cs
 │   ├── Booking.cs
-│   └── BookingSeat.cs
+│   ├── BookingSeat.cs
+│   └── User.cs
 │
 ├── DTOs/
+│   ├── Auth/
+│   │   ├── RegisterDto.cs
+│   │   └── LoginDto.cs
 │   ├── Movies/
 │   ├── Theatres/
 │   ├── Screens/
@@ -62,7 +83,8 @@ MovieTicketBooking/
 │   └── PagedResult.cs
 │
 ├── Data/
-│   └── ApplicationDbContext.cs
+│   ├── ApplicationDbContext.cs
+│   └── RoleSeeder.cs
 │
 ├── Repositories/
 │   ├── Interfaces/
@@ -86,6 +108,8 @@ MovieTicketBooking/
 └── docs.md
 ```
 
+---
+
 ## Folder Responsibilities
 
 ### 1. Controllers
@@ -98,6 +122,7 @@ The controllers do not directly communicate with the database.
 
 | Controller | Responsibility |
 |---|---|
+| AuthController | User registration and login |
 | MoviesController | Movie management |
 | TheatresController | Theatre management |
 | ScreensController | Screen management |
@@ -110,8 +135,6 @@ The controllers do not directly communicate with the database.
 
 The Models folder contains the main entity classes representing the database tables.
 
-Each model defines the properties and relationships required for the application.
-
 | Model | Responsibility |
 |---|---|
 | Movie | Stores movie information |
@@ -122,6 +145,7 @@ Each model defines the properties and relationships required for the application
 | ShowSeat | Tracks the availability of each seat for a particular show |
 | Booking | Stores customer booking information |
 | BookingSeat | Stores the seats included in a booking |
+| User | Stores registered user information, password hash and role |
 
 ### 3. DTOs
 
@@ -129,10 +153,11 @@ DTO stands for Data Transfer Object.
 
 The DTOs folder contains request and response classes used to transfer data between clients and the API.
 
-DTOs separate the API request and response structures from the database entity models.
+DTOs separate API request and response structures from database entity models.
 
 Subfolders:
 
+- **Auth:** Registration and login request DTOs.
 - **Movies:** Movie creation, update and response DTOs.
 - **Theatres:** Theatre creation, update and response DTOs.
 - **Screens:** Screen creation, update and response DTOs.
@@ -143,22 +168,47 @@ Subfolders:
 
 `PagedResult.cs` provides a common structure for paginated API responses.
 
-### 4. Data
+### 4. Constants
 
-The Data folder contains `ApplicationDbContext.cs`.
+The Constants folder contains reusable constant values.
+
+`UserRoles.cs` defines the roles used by the application:
+
+- Admin
+- Customer
+
+Using constants avoids repeatedly writing role names throughout the application.
+
+### 5. Data
+
+The Data folder contains:
+
+**ApplicationDbContext.cs**
 
 ApplicationDbContext is the connection between Entity Framework Core and the SQL Server database.
 
 Responsibilities:
 
-- Defines DbSet properties for the eight entities.
+- Defines DbSet properties for the application entities.
 - Configures entity relationships.
 - Defines primary keys and unique indexes.
 - Configures check constraints.
 - Configures decimal precision for monetary values.
 - Defines delete behaviours.
 
-### 5. Repositories
+**RoleSeeder.cs**
+
+Responsible for creating the initial Admin account.
+
+It:
+
+- Reads the Admin password from User Secrets.
+- Checks whether the Admin account already exists.
+- Hashes the password using PasswordHasher.
+- Saves the Admin account in the Users table.
+- Avoids inserting duplicate Admin accounts.
+
+### 6. Repositories
 
 The Repositories folder contains database access logic.
 
@@ -182,7 +232,7 @@ Examples include:
 
 Repositories are responsible for communicating with the DbContext.
 
-### 6. Services
+### 7. Services
 
 The Services folder contains the application business logic.
 
@@ -206,10 +256,12 @@ Examples:
 - Calculating booking amounts.
 - Updating seat availability during cancellation.
 - Mapping entity models into response DTOs.
+- Registering users and verifying login credentials.
+- Generating JWT tokens.
 
 Services use repository interfaces to access database operations.
 
-### 7. Middleware
+### 8. Middleware
 
 The Middleware folder contains `GlobalExceptionHandler.cs`.
 
@@ -233,7 +285,7 @@ Expected exception mappings include:
 
 Unexpected internal exception details are logged rather than returned to the client.
 
-### 8. Migrations
+### 9. Migrations
 
 The Migrations folder contains Entity Framework Core migration files.
 
@@ -241,7 +293,7 @@ Migrations track database schema changes based on the entity models and DbContex
 
 They are used to create and update the SQL Server database.
 
-### 9. Program.cs
+### 10. Program.cs
 
 Program.cs is the application's entry point.
 
@@ -252,26 +304,23 @@ Responsibilities:
 - Registers repository and service implementations with dependency injection.
 - Configures OpenAPI and Scalar.
 - Registers centralized exception handling.
+- Configures JWT Bearer authentication.
+- Registers authorization services.
 - Configures the HTTP request pipeline.
+- Calls the Admin seeder in the Development environment.
 - Maps API controllers.
 
-### 10. appsettings.json
+### 11. appsettings.json
 
-Stores application configuration, including the SQL Server connection string.
+Stores application configuration, including the SQL Server connection string and JWT settings such as issuer, audience and expiry.
 
-Example:
+The JWT signing key and Admin seed password are stored using .NET User Secrets during development. They should not be committed to the repository.
 
-```json
-{
-  "ConnectionStrings": {
-    "DefaultConnection": "Server=.\\SQLEXPRESS;Database=MovieTicketBookingDB;Trusted_Connection=True;TrustServerCertificate=True;"
-  }
-}
-```
+---
 
 ## Database Design
 
-The application contains eight main database tables.
+The application contains nine main database tables:
 
 | Table | Description |
 |---|---|
@@ -283,6 +332,7 @@ The application contains eight main database tables.
 | ShowSeats | Seat availability for individual shows |
 | Bookings | Customer booking information |
 | BookingSeats | Seats associated with individual bookings |
+| Users | Registered user information and authentication details |
 
 ### Entity Relationships
 
@@ -305,10 +355,107 @@ The application contains eight main database tables.
 - Show end time must be greater than show start time.
 - Ticket prices and booking amounts cannot be negative.
 - Foreign key relationships protect dependent records from unsafe deletion.
+- User email addresses are unique.
+
+---
 
 ## Application Workflow
 
-### 1. Movie Management
+### 1. User Registration
+
+A new customer registers through the registration API by providing:
+
+- Full name.
+- Email.
+- Password.
+
+The application checks whether the email already exists.
+
+The password is hashed using `PasswordHasher<User>` before storing the user in the database.
+
+Public registration automatically assigns the `Customer` role. Users cannot select the Admin role through the registration request.
+
+### 2. User Login and JWT Authentication
+
+Users log in using their registered email and password.
+
+The application:
+
+1. Retrieves the user using the email address.
+2. Verifies the entered password against the stored password hash.
+3. Generates a JWT token when the credentials are valid.
+4. Includes user information and role claims in the token.
+5. Returns the token to the client.
+
+The token is used to access protected API endpoints.
+
+### 3. Role-Based Authorization
+
+The application supports two roles.
+
+| Operation | Admin | Customer |
+|---|---|---|
+| Register and login | Yes | Yes |
+| View movies | Yes | Yes |
+| Create, update and delete movies | Yes | No |
+| View theatres | Yes | Yes |
+| Manage theatres | Yes | No |
+| View screens | Yes | Yes |
+| Manage screens | Yes | No |
+| View seats | Yes | Yes |
+| Manage seats | Yes | No |
+| View shows | Yes | Yes |
+| Manage shows | Yes | No |
+| View show seat availability | Yes | Yes |
+| Create bookings | Yes | Yes |
+| Retrieve all bookings | Yes | No |
+| Retrieve a booking by ID | Yes | No |
+| Retrieve bookings by show | Yes | No |
+| Cancel bookings | Yes | No |
+
+A valid JWT is required for protected endpoints.
+
+The application uses role claims in the JWT to determine whether the logged-in user is authorized to perform an operation.
+
+A missing or invalid token returns `401 Unauthorized`.
+
+A valid token without the required role returns `403 Forbidden`.
+
+**Note:** Customer-specific booking ownership and customer-only booking cancellation are not implemented in the current version. Booking retrieval and cancellation are restricted to Admin.
+
+### 4. Admin User Seeding
+
+The application automatically creates an initial Admin account using the seeding process.
+
+The Admin password is configured through .NET User Secrets.
+
+Example:
+
+```powershell
+dotnet user-secrets set "SeedUsers:AdminPassword" "YourAdminPassword"
+```
+
+The seeder:
+
+1. Reads the configured Admin password.
+2. Checks whether the Admin account already exists.
+3. Creates the Admin user if it does not exist.
+4. Hashes the password before saving.
+5. Assigns the Admin role.
+6. Saves the account in the Users table.
+
+The seeded account uses:
+
+- Email: `admin@moviebooking.com`
+- Role: `Admin`
+
+The password is not stored as plain text.
+
+The seeder runs in the Development environment and does not create duplicate Admin accounts on repeated application startup.
+
+Customer accounts continue to be created through the registration API.
+
+### 5. Movie Management
 
 The administrator can create, retrieve, update, search and delete movies.
 
@@ -323,7 +470,7 @@ Movie information includes:
 
 Movie deletion is restricted when dependent shows exist.
 
-### 2. Theatre Management
+### 6. Theatre Management
 
 The administrator can create and manage theatres.
 
@@ -331,7 +478,7 @@ Each theatre stores its name and location.
 
 A theatre can contain multiple screens.
 
-### 3. Screen Management
+### 7. Screen Management
 
 Screens are created under existing theatres.
 
@@ -339,7 +486,7 @@ Each screen has a screen name and theatre association.
 
 Duplicate screen names within the same theatre are not allowed.
 
-### 4. Seat Management
+### 8. Seat Management
 
 Physical seats are created under screens.
 
@@ -354,7 +501,7 @@ Each seat contains:
 
 Duplicate seat coordinates within a screen are prevented.
 
-### 5. Show Scheduling
+### 9. Show Scheduling
 
 A show connects a movie with a screen and a scheduled time.
 
@@ -370,7 +517,7 @@ When a show is created, the system generates a ShowSeat record for every physica
 
 Initially, every generated ShowSeat has the status `Available`.
 
-### 6. Show Seat Availability
+### 10. Show Seat Availability
 
 ShowSeats represent the availability of physical seats for a particular show.
 
@@ -382,7 +529,7 @@ The application provides endpoints to retrieve:
 - Available seats.
 - Booked seats.
 
-### 7. Booking Creation
+### 11. Booking Creation
 
 The customer provides:
 
@@ -407,7 +554,7 @@ The application:
 
 The total amount is calculated by the server and is not accepted from the customer request.
 
-### 8. Booking Retrieval
+### 12. Booking Retrieval
 
 The application supports:
 
@@ -417,7 +564,9 @@ The application supports:
 - Retrieving a booking using its ID.
 - Retrieving bookings associated with a particular show.
 
-### 9. Booking Cancellation
+These retrieval operations are currently restricted to Admin.
+
+### 13. Booking Cancellation
 
 When a confirmed booking is cancelled:
 
@@ -430,81 +579,143 @@ When a confirmed booking is cancelled:
 
 The booking and its booking-seat records are preserved for historical reference.
 
+---
+
 ## API Endpoints
+
+### Authentication
+
+| Method | Endpoint | Purpose | Access |
+|---|---|---|---|
+| POST | `/api/auth/register` | Register a customer | Anonymous |
+| POST | `/api/auth/login` | Login and receive JWT | Anonymous |
 
 ### Movies
 
-| Method | Endpoint | Purpose |
-|---|---|---|
-| POST | `/api/movies` | Create a movie |
-| GET | `/api/movies` | Retrieve movies with pagination and optional title filter |
-| GET | `/api/movies/{id}` | Retrieve a movie |
-| PUT | `/api/movies/{id}` | Update a movie |
-| DELETE | `/api/movies/{id}` | Delete a movie |
-| GET | `/api/movies/search?title=leo` | Search movies by title |
+| Method | Endpoint | Purpose | Access |
+|---|---|---|---|
+| POST | `/api/movies` | Create a movie | Admin |
+| GET | `/api/movies` | Retrieve movies with pagination and optional title filter | Admin, Customer |
+| GET | `/api/movies/{id}` | Retrieve a movie | Admin, Customer |
+| PUT | `/api/movies/{id}` | Update a movie | Admin |
+| DELETE | `/api/movies/{id}` | Delete a movie | Admin |
+| GET | `/api/movies/search?title=leo` | Search movies by title | Admin, Customer |
 
 ### Theatres
 
-| Method | Endpoint | Purpose |
-|---|---|---|
-| POST | `/api/theatres` | Create a theatre |
-| GET | `/api/theatres` | Retrieve theatres |
-| GET | `/api/theatres/{id}` | Retrieve a theatre |
-| PUT | `/api/theatres/{id}` | Update a theatre |
-| DELETE | `/api/theatres/{id}` | Delete a theatre |
+| Method | Endpoint | Purpose | Access |
+|---|---|---|---|
+| POST | `/api/theatres` | Create a theatre | Admin |
+| GET | `/api/theatres` | Retrieve theatres | Admin, Customer |
+| GET | `/api/theatres/{id}` | Retrieve a theatre | Admin, Customer |
+| PUT | `/api/theatres/{id}` | Update a theatre | Admin |
+| DELETE | `/api/theatres/{id}` | Delete a theatre | Admin |
 
 ### Screens
 
-| Method | Endpoint | Purpose |
-|---|---|---|
-| POST | `/api/screens` | Create a screen |
-| GET | `/api/screens` | Retrieve screens, optionally filtered by theatre |
-| GET | `/api/screens/{id}` | Retrieve a screen |
-| GET | `/api/screens/theatre/{theatreId}` | Retrieve screens of a theatre |
-| PUT | `/api/screens/{id}` | Update a screen |
-| DELETE | `/api/screens/{id}` | Delete a screen |
+| Method | Endpoint | Purpose | Access |
+|---|---|---|---|
+| POST | `/api/screens` | Create a screen | Admin |
+| GET | `/api/screens` | Retrieve screens, optionally filtered by theatre | Admin, Customer |
+| GET | `/api/screens/{id}` | Retrieve a screen | Admin, Customer |
+| GET | `/api/screens/theatre/{theatreId}` | Retrieve screens of a theatre | Admin, Customer |
+| PUT | `/api/screens/{id}` | Update a screen | Admin |
+| DELETE | `/api/screens/{id}` | Delete a screen | Admin |
 
 ### Seats
 
-| Method | Endpoint | Purpose |
-|---|---|---|
-| POST | `/api/seats` | Create a seat |
-| POST | `/api/seats/bulk` | Create multiple seats |
-| GET | `/api/seats/screen/{screenId}` | Retrieve seats of a screen |
-| GET | `/api/seats/{id}` | Retrieve a seat |
-| PUT | `/api/seats/{id}` | Update a seat |
-| DELETE | `/api/seats/{id}` | Delete a seat |
+| Method | Endpoint | Purpose | Access |
+|---|---|---|---|
+| POST | `/api/seats` | Create a seat | Admin |
+| POST | `/api/seats/bulk` | Create multiple seats | Admin |
+| GET | `/api/seats/screen/{screenId}` | Retrieve seats of a screen | Admin, Customer |
+| GET | `/api/seats/{id}` | Retrieve a seat | Admin, Customer |
+| PUT | `/api/seats/{id}` | Update a seat | Admin |
+| DELETE | `/api/seats/{id}` | Delete a seat | Admin |
 
 ### Shows
 
-| Method | Endpoint | Purpose |
-|---|---|---|
-| POST | `/api/shows` | Create a show |
-| GET | `/api/shows` | Retrieve shows with optional filters |
-| GET | `/api/shows/{id}` | Retrieve a show |
-| GET | `/api/shows/movie/{movieId}` | Retrieve shows of a movie |
-| GET | `/api/shows/theatre/{theatreId}` | Retrieve shows at a theatre |
-| GET | `/api/shows/search?date=YYYY-MM-DD` | Search shows by date |
-| PUT | `/api/shows/{id}` | Update a show |
-| DELETE | `/api/shows/{id}` | Delete a show |
+| Method | Endpoint | Purpose | Access |
+|---|---|---|---|
+| POST | `/api/shows` | Create a show | Admin |
+| GET | `/api/shows` | Retrieve shows with optional filters | Admin, Customer |
+| GET | `/api/shows/{id}` | Retrieve a show | Admin, Customer |
+| GET | `/api/shows/movie/{movieId}` | Retrieve shows of a movie | Admin, Customer |
+| GET | `/api/shows/theatre/{theatreId}` | Retrieve shows at a theatre | Admin, Customer |
+| GET | `/api/shows/search?date=YYYY-MM-DD` | Search shows by date | Admin, Customer |
+| PUT | `/api/shows/{id}` | Update a show | Admin |
+| DELETE | `/api/shows/{id}` | Delete a show | Admin |
 
 ### Show Seats
 
-| Method | Endpoint | Purpose |
-|---|---|---|
-| GET | `/api/shows/{showId}/seats` | Retrieve all seats for a show |
-| GET | `/api/shows/{showId}/seats/available` | Retrieve available seats |
-| GET | `/api/shows/{showId}/seats/booked` | Retrieve booked seats |
+| Method | Endpoint | Purpose | Access |
+|---|---|---|---|
+| GET | `/api/shows/{showId}/seats` | Retrieve all seats for a show | Admin, Customer |
+| GET | `/api/shows/{showId}/seats/available` | Retrieve available seats | Admin, Customer |
+| GET | `/api/shows/{showId}/seats/booked` | Retrieve booked seats | Admin, Customer |
 
 ### Bookings
 
-| Method | Endpoint | Purpose |
-|---|---|---|
-| POST | `/api/bookings` | Create a booking |
-| GET | `/api/bookings` | Retrieve bookings with optional filters |
-| GET | `/api/bookings/{id}` | Retrieve a booking |
-| GET | `/api/bookings/show/{showId}` | Retrieve bookings for a show |
-| PUT | `/api/bookings/{id}/cancel` | Cancel a booking |
+| Method | Endpoint | Purpose | Access |
+|---|---|---|---|
+| POST | `/api/bookings` | Create a booking | Admin, Customer |
+| GET | `/api/bookings` | Retrieve bookings with optional filters | Admin |
+| GET | `/api/bookings/{id}` | Retrieve a booking | Admin |
+| GET | `/api/bookings/show/{showId}` | Retrieve bookings for a show | Admin |
+| PUT | `/api/bookings/{id}/cancel` | Cancel a booking | Admin |
+
+---
+
+## Authentication and Configuration
+
+### JWT Configuration
+
+The application uses JWT Bearer authentication.
+
+The JWT configuration contains:
+
+- Issuer
+- Audience
+- Signing key
+- Token expiry time
+
+The signing key should be stored securely using User Secrets during development.
+
+### Configure User Secrets
+
+Open PowerShell in the project folder containing the `.csproj` file.
+
+Initialize User Secrets once:
+
+```powershell
+dotnet user-secrets init
+```
+
+Set the JWT signing key:
+
+```powershell
+$jwtKey = [Convert]::ToBase64String(
+    [Security.Cryptography.RandomNumberGenerator]::GetBytes(32)
+)
+
+dotnet user-secrets set "Jwt:Key" $jwtKey
+```
+
+Set the Admin seed password:
+
+```powershell
+dotnet user-secrets set "SeedUsers:AdminPassword" "YourAdminPassword"
+```
+
+Verify the configuration:
+
+```powershell
+dotnet user-secrets list
+```
+
+Do not commit passwords or signing keys to GitHub.
+
+---
 
 ## Running the Project
 
@@ -519,16 +730,26 @@ The booking and its booking-seat records are preserved for historical reference.
 ### Step 1: Clone the Repository
 
 ```powershell
-git clone <your-github-repository-url>
+git clone https://github.com/harshaa9881-cmd/Movie_Ticket_webapp.git
 ```
 
 ### Step 2: Open the Project
 
-Open `MovieTicketBooking.sln` or the project folder in Visual Studio.
+Open the solution or project folder in Visual Studio.
 
 ### Step 3: Configure the Database
 
 Update the `DefaultConnection` value in `appsettings.json` according to your SQL Server instance.
+
+Example:
+
+```json
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=.\\SQLEXPRESS;Database=MovieTicketBookingDB;Trusted_Connection=True;TrustServerCertificate=True;"
+  }
+}
+```
 
 ### Step 4: Restore Packages
 
@@ -536,25 +757,31 @@ Update the `DefaultConnection` value in `appsettings.json` according to your SQL
 dotnet restore
 ```
 
-### Step 5: Apply Migrations
+### Step 5: Configure User Secrets
+
+Initialize User Secrets and configure the JWT key and Admin password as explained in the Authentication and Configuration section.
+
+### Step 6: Apply Migrations
 
 ```powershell
 dotnet ef database update
 ```
 
-### Step 6: Build the Project
+### Step 7: Build the Project
 
 ```powershell
 dotnet build
 ```
 
-### Step 7: Run the Project
+### Step 8: Run the Project
 
 ```powershell
 dotnet run
 ```
 
-### Step 8: Open API Documentation
+During Development startup, the application checks whether the initial Admin account exists and creates it if necessary.
+
+### Step 9: Open API Documentation
 
 Open the Scalar URL displayed by the application.
 
@@ -566,28 +793,68 @@ https://localhost:<port>/scalar/v1
 
 Use Scalar or Postman to test the endpoints.
 
+### Step 10: Login and Use JWT
+
+Use the seeded Admin credentials to log in through:
+
+```text
+POST /api/auth/login
+```
+
+Copy the returned JWT and use it in Postman:
+
+**Authorization → Bearer Token**
+
+Customer accounts can be registered through:
+
+```text
+POST /api/auth/register
+```
+
+---
+
 ## Git Workflow
 
 The project was developed incrementally using Git commits.
 
-Each commit represents a separate development stage. Refer to `docs.md` for the detailed implementation history of all commits.
+Each commit represents a separate development stage.
+
+Refer to `docs.md` for the detailed implementation history of all 15 commits.
+
+---
 
 ## Scope and Limitations
 
-This is Version 1 of the Movie Ticket Booking System.
+The current implementation focuses on the backend Web API, database operations, authentication and role-based authorization.
 
-The current implementation focuses on the backend Web API and database operations.
+Implemented features:
+
+- Movie management.
+- Theatre and screen management.
+- Seat management and bulk seat creation.
+- Show scheduling and validation.
+- Show seat availability.
+- Booking creation and cancellation.
+- Database transactions for booking operations.
+- Centralized exception handling.
+- JWT registration and login.
+- Admin and Customer role-based authorization.
+- Admin account seeding using User Secrets.
 
 The following are outside the current scope:
 
-- User authentication and authorization.
-- JWT token implementation.
-- Online payment gateway integration.
 - Frontend application.
+- Online payment gateway integration.
 - Email or SMS notifications.
+- Theatre Manager role.
+- Customer-specific booking ownership and cancellation authorization.
+
+---
 
 ## Conclusion
 
-The Movie Ticket Booking System demonstrates a layered ASP.NET Core Web API application with Entity Framework Core and SQL Server.
+The Movie Ticket Booking System demonstrates a layered ASP.NET Core Web API application using Entity Framework Core and SQL Server.
 
-It covers entity relationships, CRUD operations, business validation, show scheduling, seat availability, booking creation, booking cancellation, database transactions, and centralized exception handling.
+It covers entity relationships, CRUD operations, business validation, show scheduling, seat availability, booking creation, booking cancellation, database transactions, centralized exception handling, JWT authentication, role-based authorization and Admin user seeding.
+
+The project was developed incrementally using Git commits, with each stage adding functionality to the application.
