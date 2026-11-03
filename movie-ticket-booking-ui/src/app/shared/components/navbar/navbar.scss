@@ -1,0 +1,77 @@
+.cinema-navbar {
+  background-color: #17171e;
+  border-bottom: 1px solid #292932;
+  padding: 16px 0;
+}
+
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: #e50914;
+  color: white;
+  border-radius: 9px;
+  font-size: 17px;
+}
+
+.brand-name {
+  font-size: 23px;
+  font-weight: 700;
+  color: white;
+}
+
+.navbar-nav {
+  gap: 25px;
+}
+
+.nav-link {
+  color: #c4c4ce;
+  font-size: 15px;
+  transition: color 0.2s ease;
+}
+
+  .nav-link:hover {
+    color: #ffffff;
+  }
+
+.navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.login-btn,
+.register-btn {
+  border-radius: 7px;
+  padding: 9px 20px;
+  font-weight: 600;
+}
+
+.register-btn {
+  background-color: #e50914;
+  border-color: #e50914;
+}
+
+  .register-btn:hover {
+    background-color: #c40812;
+    border-color: #c40812;
+  }
+
+@media (max-width: 991px) {
+  .navbar-actions {
+    margin-top: 15px;
+    padding-bottom: 10px;
+  }
+
+  .navbar-nav {
+    gap: 5px;
+  }
+}
