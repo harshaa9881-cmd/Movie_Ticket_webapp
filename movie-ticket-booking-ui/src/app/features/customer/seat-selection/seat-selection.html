@@ -76,7 +76,6 @@
       </p>
 
       <div *ngIf="selectedSeats.length > 0">
-
         <p>
           <strong>Selected Seats:</strong>
           {{ selectedSeats.length }}
@@ -93,21 +92,60 @@
           <strong>Total Amount:</strong>
           {{ getTotalPrice() | currency:'INR':'symbol':'1.2-2' }}
         </p>
-
       </div>
 
       <button type="button"
-              class="btn btn-outline-light me-2"
+              class="btn btn-outline-light"
               [disabled]="selectedSeats.length === 0"
               (click)="clearSelection()">
         Clear Selection
       </button>
 
-      <button type="button"
-              class="btn btn-danger"
-              disabled>
-        Continue to Booking – Coming in Next Commit
-      </button>
+      <div *ngIf="selectedSeats.length > 0" class="customer-form mt-4">
+
+        <h5>Customer Details</h5>
+
+        <div class="mb-3">
+          <label class="form-label">Full Name</label>
+          <input type="text"
+                 class="form-control"
+                 [(ngModel)]="customerName"
+                 name="customerName"
+                 required>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Email</label>
+          <input type="email"
+                 class="form-control"
+                 [(ngModel)]="customerEmail"
+                 name="customerEmail"
+                 required>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Phone Number</label>
+          <input type="tel"
+                 class="form-control"
+                 [(ngModel)]="customerPhone"
+                 name="customerPhone"
+                 required>
+        </div>
+
+        <div *ngIf="errorMessage" class="alert alert-danger">
+          {{ errorMessage }}
+        </div>
+
+        <button type="button"
+                class="btn btn-danger w-100"
+                [disabled]="isBooking"
+                (click)="createBooking()">
+
+          {{ isBooking ? 'Creating Booking...' : 'Confirm Booking' }}
+
+        </button>
+
+      </div>
 
     </div>
 

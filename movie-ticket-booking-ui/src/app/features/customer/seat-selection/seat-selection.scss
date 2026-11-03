@@ -149,4 +149,25 @@
   .screen {
     width: 90%;
   }
+  .customer-form {
+    border-top: 1px solid #393942;
+    padding-top: 25px;
+  }
+
+    .customer-form h5 {
+      margin-bottom: 20px;
+      font-weight: 700;
+    }
+
+    .customer-form .form-control {
+      background-color: #202027;
+      border: 1px solid #393942;
+      color: white;
+      padding: 12px;
+    }
+
+      .customer-form .form-control:focus {
+        border-color: #dc3545;
+        box-shadow: none;
+      }
 }

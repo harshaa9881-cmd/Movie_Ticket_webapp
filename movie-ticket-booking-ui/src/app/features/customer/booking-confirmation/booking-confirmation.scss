@@ -1,0 +1,45 @@
+.confirmation-page {
+  min-height: 75vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.confirmation-card {
+  width: 100%;
+  max-width: 650px;
+  padding: 35px;
+  text-align: center;
+  background-color: #1c1c24;
+  border: 1px solid #303039;
+  border-radius: 14px;
+}
+
+.success-icon {
+  width: 65px;
+  height: 65px;
+  margin: 0 auto 20px;
+  border-radius: 50%;
+  background-color: #198754;
+  color: white;
+  font-size: 2.5rem;
+  line-height: 65px;
+}
+
+.confirmation-card h1 {
+  font-weight: 700;
+}
+
+.booking-details {
+  margin: 25px 0;
+  padding: 20px;
+  text-align: left;
+  background-color: #252530;
+  border-radius: 10px;
+}
+
+  .booking-details p {
+    margin-bottom: 12px;
+    color: #ccc;
+    overflow-wrap: anywhere;
+  }

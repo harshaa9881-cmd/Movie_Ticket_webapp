@@ -1,0 +1,62 @@
+<div class="container py-5 confirmation-page">
+
+  <div *ngIf="booking; else noBooking" class="confirmation-card">
+
+    <div class="success-icon">✓</div>
+
+    <h1>Booking Confirmed!</h1>
+
+    <p class="text-secondary">
+      Your booking has been created successfully.
+    </p>
+
+    <div class="booking-details">
+
+      <p>
+        <strong>Booking Reference:</strong>
+        {{ booking.bookingReference }}
+      </p>
+
+      <p>
+        <strong>Customer:</strong>
+        {{ booking.customerName }}
+      </p>
+
+      <p>
+        <strong>Seats:</strong>
+        {{ booking.seats.join(', ') }}
+      </p>
+
+      <p>
+        <strong>Booking Date:</strong>
+        {{ booking.bookingDate | date:'dd MMM yyyy, hh:mm a' }}
+      </p>
+
+      <p>
+        <strong>Total Amount:</strong>
+        {{ booking.totalAmount | currency:'INR':'symbol':'1.2-2' }}
+      </p>
+
+      <p>
+        <strong>Status:</strong>
+        {{ booking.status }}
+      </p>
+
+    </div>
+
+    <a routerLink="/customer/bookings" class="btn btn-danger">
+      View Booking History
+    </a>
+
+  </div>
+
+  <ng-template #noBooking>
+    <div class="text-center">
+      <h3>Booking details are not available.</h3>
+      <a routerLink="/customer/movies" class="btn btn-danger mt-3">
+        Browse Movies
+      </a>
+    </div>
+  </ng-template>
+
+</div>

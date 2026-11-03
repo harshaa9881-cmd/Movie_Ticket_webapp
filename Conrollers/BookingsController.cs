@@ -8,7 +8,7 @@ namespace MovieTicketBooking.Controllers;
 
 [ApiController]
 [Route("api/bookings")]
-[Authorize]
+
 public class BookingsController : ControllerBase
 {
     private readonly IBookingService _bookingService;

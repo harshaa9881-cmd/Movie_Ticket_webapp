@@ -24,7 +24,7 @@ export class MovieList implements OnInit {
   constructor(private movieService: MovieService, private cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
-    console.log('MovieList component initialized');
+    
     this.loadMovies();
   }
 
@@ -33,20 +33,17 @@ export class MovieList implements OnInit {
     this.isLoading = true;
     this.errorMessage = '';
 
-    console.log('Loading movies started');
+    
 
     this.movieService.getMovies().subscribe({
 
       next: (response) => {
-        console.log('API Response:', response);
-
+       
         this.movies = response.items;
         this.isLoading = false;
 
         this.cdr.detectChanges();
 
-        console.log('Movies after assignment:', this.movies.length);
-        console.log('Loading completed:', this.isLoading);
       },
 
       error: (error) => {

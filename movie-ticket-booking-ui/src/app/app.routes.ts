@@ -7,6 +7,9 @@ import { Register } from './features/auth/register/register';
 import { TheatreList } from './features/customer/theatre-list/theatre-list';
 import { ShowList } from './features/customer/show-list/show-list';
 
+import { BookingConfirmation } from './features/customer/booking-confirmation/booking-confirmation';
+import { BookingHistory } from './features/customer/booking-history/booking-history';
+
 import { MovieList } from './features/customer/movie-list/movie-list';
 import { MovieDetails } from './features/customer/movie-details/movie-details';
 
@@ -70,6 +73,16 @@ export const routes: Routes = [
   {
     path: 'customer/shows/:showId/seats',
     component: SeatSelection,
+    canActivate: [authGuard, customerGuard]
+  },
+  {
+    path: 'customer/booking-confirmation',
+    component: BookingConfirmation,
+    canActivate: [authGuard, customerGuard]
+  },
+  {
+    path: 'customer/bookings',
+    component: BookingHistory,
     canActivate: [authGuard, customerGuard]
   },
 
