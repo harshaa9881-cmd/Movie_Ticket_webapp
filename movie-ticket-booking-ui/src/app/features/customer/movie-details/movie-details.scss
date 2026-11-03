@@ -1,0 +1,52 @@
+.movie-details-page {
+  min-height: 75vh;
+}
+
+.details-card {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 35px;
+  background-color: #1c1c24;
+  border: 1px solid #303039;
+  border-radius: 14px;
+  padding: 30px;
+}
+
+.details-poster {
+  min-height: 350px;
+  background: linear-gradient(135deg, #292936, #17171e);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 5rem;
+}
+
+.details-content {
+  padding: 15px 0;
+}
+
+  .details-content h1 {
+    font-weight: 700;
+    margin-bottom: 20px;
+  }
+
+.details-info {
+  margin-top: 25px;
+  color: #ccc;
+}
+
+  .details-info p {
+    margin-bottom: 12px;
+  }
+
+@media (max-width: 768px) {
+  .details-card {
+    grid-template-columns: 1fr;
+    padding: 18px;
+  }
+
+  .details-poster {
+    min-height: 220px;
+  }
+}

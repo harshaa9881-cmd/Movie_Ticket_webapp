@@ -4,6 +4,9 @@ import { Home } from './features/home/home';
 import { Login } from './features/auth/login/login';
 import { Register } from './features/auth/register/register';
 
+import { MovieList } from './features/customer/movie-list/movie-list';
+import { MovieDetails } from './features/customer/movie-details/movie-details';
+
 import { Dashboard as AdminDashboard } from './features/admin/dashboard/dashboard';
 import { Dashboard as CustomerDashboard } from './features/customer/dashboard/dashboard';
 
@@ -37,6 +40,16 @@ export const routes: Routes = [
   {
     path: 'customer',
     component: CustomerDashboard,
+    canActivate: [authGuard, customerGuard]
+  },
+  {
+    path: 'customer/movies',
+    component: MovieList,
+    canActivate: [authGuard, customerGuard]
+  },
+  {
+    path: 'customer/movies/:id',
+    component: MovieDetails,
     canActivate: [authGuard, customerGuard]
   },
 

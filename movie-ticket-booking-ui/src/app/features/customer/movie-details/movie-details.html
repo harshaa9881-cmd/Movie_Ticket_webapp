@@ -1,0 +1,60 @@
+<div class="container movie-details-page py-5">
+
+  <a routerLink="/customer/movies"
+     class="btn btn-outline-light mb-4">
+    ← Back to Movies
+  </a>
+
+  <div *ngIf="isLoading" class="text-center py-5">
+    <div class="spinner-border text-danger"></div>
+    <p class="text-secondary mt-3">Loading movie details...</p>
+  </div>
+
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    {{ errorMessage }}
+  </div>
+
+  <div *ngIf="movie && !isLoading" class="details-card">
+
+    <div class="details-poster">
+      🎬
+    </div>
+
+    <div class="details-content">
+
+      <p class="text-danger fw-bold">{{ movie.genre }}</p>
+
+      <h1>{{ movie.title }}</h1>
+
+      <p class="text-secondary">
+        {{ movie.description || 'No description available.' }}
+      </p>
+
+      <div class="details-info">
+
+        <p>
+          <strong>Duration:</strong>
+          {{ movie.durationMinutes }} minutes
+        </p>
+
+        <p>
+          <strong>Language:</strong>
+          {{ movie.language }}
+        </p>
+
+        <p>
+          <strong>Release Date:</strong>
+          {{ movie.releaseDate | date:'dd MMM yyyy' }}
+        </p>
+
+      </div>
+
+      <button class="btn btn-danger mt-3" disabled>
+        Book Tickets – Coming in Next Commit
+      </button>
+
+    </div>
+
+  </div>
+
+</div>

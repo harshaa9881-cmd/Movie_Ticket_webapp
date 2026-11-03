@@ -27,7 +27,6 @@
     <Folder Include="movie-ticket-booking-ui\src\app\features\customer\" />
     <Folder Include="movie-ticket-booking-ui\src\app\features\admin\" />
     <Folder Include="movie-ticket-booking-ui\src\app\shared\components\" />
-    <Folder Include="movie-ticket-booking-ui\src\app\shared\models\" />
   </ItemGroup>
 
 </Project>
