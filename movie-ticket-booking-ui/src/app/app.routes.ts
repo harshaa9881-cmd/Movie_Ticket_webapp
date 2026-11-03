@@ -10,6 +10,8 @@ import { ShowList } from './features/customer/show-list/show-list';
 import { MovieList } from './features/customer/movie-list/movie-list';
 import { MovieDetails } from './features/customer/movie-details/movie-details';
 
+import { SeatSelection } from './features/customer/seat-selection/seat-selection';
+
 import { Dashboard as AdminDashboard } from './features/admin/dashboard/dashboard';
 import { Dashboard as CustomerDashboard } from './features/customer/dashboard/dashboard';
 
@@ -63,6 +65,11 @@ export const routes: Routes = [
   {
     path: 'customer/theatres/:theatreId/shows',
     component: ShowList,
+    canActivate: [authGuard, customerGuard]
+  },
+  {
+    path: 'customer/shows/:showId/seats',
+    component: SeatSelection,
     canActivate: [authGuard, customerGuard]
   },
 

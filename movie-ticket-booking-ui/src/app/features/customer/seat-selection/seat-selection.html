@@ -1,0 +1,116 @@
+<div class="container py-5 seat-page">
+
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h1 class="page-title">Select Your Seats</h1>
+      <p class="text-secondary">
+        Choose your preferred available seats.
+      </p>
+    </div>
+
+    <a routerLink="/customer/theatres"
+       class="btn btn-outline-light">
+      Back to Theatres
+    </a>
+  </div>
+
+  <div *ngIf="isLoading" class="text-center py-5">
+    <div class="spinner-border text-danger"></div>
+    <p class="text-secondary mt-3">Loading seats...</p>
+  </div>
+
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    {{ errorMessage }}
+  </div>
+
+  <div *ngIf="!isLoading && !errorMessage">
+
+    <div class="screen-container">
+      <div class="screen">SCREEN</div>
+    </div>
+
+    <div class="seat-legend mb-4">
+      <span><i class="legend-seat available"></i> Available</span>
+      <span><i class="legend-seat selected"></i> Selected</span>
+      <span><i class="legend-seat booked"></i> Booked</span>
+    </div>
+
+    <div *ngIf="seatRows.length === 0" class="text-center py-5">
+      <h4>No seats found</h4>
+    </div>
+
+    <div class="seat-layout" *ngIf="seatRows.length > 0">
+
+      <div class="seat-row" *ngFor="let row of seatRows">
+
+        <div class="row-label">{{ row.rowName }}</div>
+
+        <div class="row-seats">
+
+          <button type="button"
+                  *ngFor="let seat of row.seats"
+                  class="seat-button"
+                  [class.available]="isAvailable(seat) && !isSelected(seat)"
+                  [class.selected]="isSelected(seat)"
+                  [class.booked]="!isAvailable(seat)"
+                  [disabled]="!isAvailable(seat)"
+                  [title]="seat.seatLabel + ' - ' + seat.seatType"
+                  (click)="toggleSeat(seat)">
+
+            {{ seat.seatNumber }}
+
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="selection-summary mt-5">
+
+      <h4>Booking Summary</h4>
+
+      <p *ngIf="selectedSeats.length === 0" class="text-secondary">
+        No seats selected.
+      </p>
+
+      <div *ngIf="selectedSeats.length > 0">
+
+        <p>
+          <strong>Selected Seats:</strong>
+          {{ selectedSeats.length }}
+        </p>
+
+        <p>
+          <strong>Seat Labels:</strong>
+          <span *ngFor="let seat of selectedSeats; let last = last">
+            {{ seat.seatLabel }}<span *ngIf="!last">, </span>
+          </span>
+        </p>
+
+        <p>
+          <strong>Total Amount:</strong>
+          {{ getTotalPrice() | currency:'INR':'symbol':'1.2-2' }}
+        </p>
+
+      </div>
+
+      <button type="button"
+              class="btn btn-outline-light me-2"
+              [disabled]="selectedSeats.length === 0"
+              (click)="clearSelection()">
+        Clear Selection
+      </button>
+
+      <button type="button"
+              class="btn btn-danger"
+              disabled>
+        Continue to Booking – Coming in Next Commit
+      </button>
+
+    </div>
+
+  </div>
+
+</div>

@@ -71,9 +71,10 @@
             </p>
           </div>
 
-          <button class="btn btn-danger w-100" disabled>
-            Select Seats – Coming in Next Commit
-          </button>
+          <a [routerLink]="['/customer/shows', show.showId, 'seats']"
+             class="btn btn-danger w-100">
+            Select Seats
+          </a>
 
         </div>
 
