@@ -1,0 +1,58 @@
+<div class="container py-5 theatre-page">
+
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h1 class="page-title">Explore Theatres</h1>
+      <p class="text-secondary">
+        Choose a theatre to view its available shows.
+      </p>
+    </div>
+
+    <a routerLink="/customer" class="btn btn-outline-light">
+      Dashboard
+    </a>
+  </div>
+
+  <div *ngIf="isLoading" class="text-center py-5">
+    <div class="spinner-border text-danger"></div>
+    <p class="text-secondary mt-3">Loading theatres...</p>
+  </div>
+
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    {{ errorMessage }}
+  </div>
+
+  <div *ngIf="!isLoading && !errorMessage && theatres.length === 0"
+       class="text-center py-5">
+    <h4>No theatres available</h4>
+  </div>
+
+  <div class="row g-4" *ngIf="!isLoading && theatres.length > 0">
+
+    <div class="col-md-6 col-lg-4"
+         *ngFor="let theatre of theatres">
+
+      <div class="theatre-card h-100">
+
+        <div class="theatre-icon">🎦</div>
+
+        <div class="theatre-content">
+          <h4>{{ theatre.name }}</h4>
+
+          <p class="text-secondary">
+            {{ theatre.location }}
+          </p>
+
+          <a [routerLink]="['/customer/theatres', theatre.theatreId, 'shows']"
+             class="btn btn-danger w-100">
+            View Shows
+          </a>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

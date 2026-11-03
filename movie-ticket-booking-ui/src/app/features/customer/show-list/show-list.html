@@ -1,0 +1,86 @@
+<div class="container py-5 show-page">
+
+  <div class="mb-4">
+    <a routerLink="/customer/theatres"
+       class="btn btn-outline-light mb-3">
+      ← Back to Theatres
+    </a>
+
+    <h1 class="page-title">Available Shows</h1>
+
+    <p class="text-secondary">
+      Choose a show to continue to seat selection.
+    </p>
+  </div>
+
+  <div *ngIf="isLoading" class="text-center py-5">
+    <div class="spinner-border text-danger"></div>
+    <p class="text-secondary mt-3">Loading shows...</p>
+  </div>
+
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    {{ errorMessage }}
+  </div>
+
+  <div *ngIf="!isLoading && !errorMessage && shows.length === 0"
+       class="text-center py-5">
+    <h4>No shows available</h4>
+    <p class="text-secondary">
+      There are currently no shows listed for this theatre.
+    </p>
+  </div>
+
+  <div class="row g-4" *ngIf="!isLoading && shows.length > 0">
+
+    <div class="col-md-6 col-lg-4" *ngFor="let show of shows">
+
+      <div class="show-card h-100">
+
+        <div class="show-card-header">
+          <span class="badge bg-danger">Movie Show</span>
+          <span class="text-secondary">{{ show.screenName }}</span>
+        </div>
+
+        <div class="show-card-content">
+
+          <h4>{{ show.movieTitle }}</h4>
+
+          <p class="text-secondary mb-2">
+            {{ show.theatreName }}
+          </p>
+
+          <div class="show-information">
+            <p>
+              <strong>Start:</strong>
+              {{ show.startTime | date:'dd MMM yyyy, hh:mm a' }}
+            </p>
+
+            <p>
+              <strong>End:</strong>
+              {{ show.endTime | date:'hh:mm a' }}
+            </p>
+
+            <p>
+              <strong>Screen:</strong>
+              {{ show.screenName }}
+            </p>
+
+            <p class="ticket-price">
+              <strong>Ticket Price:</strong>
+              {{ show.ticketPrice | currency:'INR':'symbol':'1.2-2' }}
+            </p>
+          </div>
+
+          <button class="btn btn-danger w-100" disabled>
+            Select Seats – Coming in Next Commit
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

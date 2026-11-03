@@ -4,6 +4,9 @@ import { Home } from './features/home/home';
 import { Login } from './features/auth/login/login';
 import { Register } from './features/auth/register/register';
 
+import { TheatreList } from './features/customer/theatre-list/theatre-list';
+import { ShowList } from './features/customer/show-list/show-list';
+
 import { MovieList } from './features/customer/movie-list/movie-list';
 import { MovieDetails } from './features/customer/movie-details/movie-details';
 
@@ -50,6 +53,16 @@ export const routes: Routes = [
   {
     path: 'customer/movies/:id',
     component: MovieDetails,
+    canActivate: [authGuard, customerGuard]
+  },
+  {
+    path: 'customer/theatres',
+    component: TheatreList,
+    canActivate: [authGuard, customerGuard]
+  },
+  {
+    path: 'customer/theatres/:theatreId/shows',
+    component: ShowList,
     canActivate: [authGuard, customerGuard]
   },
 

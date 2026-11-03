@@ -1,0 +1,52 @@
+.show-page {
+  min-height: 75vh;
+}
+
+.page-title {
+  font-size: 2.2rem;
+  font-weight: 700;
+}
+
+.show-card {
+  background-color: #1c1c24;
+  border: 1px solid #303039;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: transform 0.2s, border-color 0.2s;
+}
+
+  .show-card:hover {
+    transform: translateY(-5px);
+    border-color: #dc3545;
+  }
+
+.show-card-header {
+  padding: 15px 20px;
+  background-color: #252530;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.show-card-content {
+  padding: 20px;
+}
+
+  .show-card-content h4 {
+    font-weight: 700;
+  }
+
+.show-information {
+  margin-top: 20px;
+  color: #ccc;
+}
+
+  .show-information p {
+    margin-bottom: 10px;
+  }
+
+.ticket-price {
+  color: #fff;
+  font-size: 1.05rem;
+}

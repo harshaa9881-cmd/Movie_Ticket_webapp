@@ -1,0 +1,35 @@
+.theatre-page {
+  min-height: 75vh;
+}
+
+.page-title {
+  font-size: 2.2rem;
+  font-weight: 700;
+}
+
+.theatre-card {
+  background-color: #1c1c24;
+  border: 1px solid #303039;
+  border-radius: 12px;
+  overflow: hidden;
+  padding: 25px;
+  transition: transform 0.2s, border-color 0.2s;
+}
+
+  .theatre-card:hover {
+    transform: translateY(-5px);
+    border-color: #dc3545;
+  }
+
+.theatre-icon {
+  font-size: 3rem;
+  margin-bottom: 15px;
+}
+
+.theatre-content h4 {
+  font-weight: 700;
+}
+
+.theatre-content p {
+  min-height: 25px;
+}
