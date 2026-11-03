@@ -1,7 +1,8 @@
 <nav class="navbar navbar-expand-lg navbar-dark cinema-navbar">
+
   <div class="container">
 
-    <a class="navbar-brand" href="#">
+    <a class="navbar-brand" routerLink="/">
       <span class="brand-icon">▶</span>
       <span class="brand-name">CineBook</span>
     </a>
@@ -15,27 +16,42 @@
             aria-label="Toggle navigation">
 
       <span class="navbar-toggler-icon"></span>
+
     </button>
 
     <div class="collapse navbar-collapse" id="navbarContent">
 
       <ul class="navbar-nav mx-auto">
 
-        <li class="nav-item">
-          <a class="nav-link" href="#movies">Movies</a>
-        </li>
+        @if (!authService.isLoggedIn()) {
 
         <li class="nav-item">
-          <a class="nav-link" href="#shows">Shows</a>
+          <a class="nav-link" routerLink="/">Home</a>
         </li>
 
+        }
+
+        @if (authService.isCustomer()) {
+
         <li class="nav-item">
-          <a class="nav-link" href="#footer">About</a>
+          <a class="nav-link" routerLink="/customer">Dashboard</a>
         </li>
+
+        }
+
+        @if (authService.isAdmin()) {
+
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/admin">Dashboard</a>
+        </li>
+
+        }
 
       </ul>
 
       <div class="navbar-actions">
+
+        @if (!authService.isLoggedIn()) {
 
         <a routerLink="/login" class="btn btn-outline-light login-btn">
           Login
@@ -45,9 +61,24 @@
           Sign Up
         </a>
 
+        }
+
+        @if (authService.isLoggedIn()) {
+
+        <button type="button"
+                class="btn btn-outline-light login-btn"
+                (click)="logout()">
+
+          Logout
+
+        </button>
+
+        }
+
       </div>
 
     </div>
 
   </div>
+
 </nav>

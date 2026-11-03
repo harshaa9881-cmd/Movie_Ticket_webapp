@@ -43,7 +43,15 @@ export class Login {
 
         this.isLoading = false;
 
-        this.router.navigate(['/']);
+        if (this.authService.isAdmin()) {
+          this.router.navigate(['/admin']);
+        }
+        else if (this.authService.isCustomer()) {
+          this.router.navigate(['/customer']);
+        }
+        else {
+          this.errorMessage = 'Unable to identify your user role.';
+        }
 
       },
 
