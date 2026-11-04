@@ -14,7 +14,9 @@ public class BookingService : IBookingService
         _bookingRepository = bookingRepository;
     }
 
-    public async Task<BookingResponse> CreateBookingAsync(CreateBookingRequest request)
+    public async Task<BookingResponse> CreateBookingAsync(
+    CreateBookingRequest request,
+    int userId)
     {
         if (!await _bookingRepository.ShowExistsAsync(request.ShowId))
             throw new KeyNotFoundException("Show not found.");
@@ -28,11 +30,19 @@ public class BookingService : IBookingService
         var booking = new Booking
         {
             BookingReference = "MOV" + Guid.NewGuid().ToString("N").Substring(0, 10).ToUpper(),
+
             ShowId = request.ShowId,
+
+            UserId = userId,
+
             CustomerName = request.CustomerName,
+
             CustomerEmail = request.CustomerEmail,
+
             CustomerPhone = request.CustomerPhone,
+
             BookingDate = DateTime.UtcNow,
+
             Status = "Confirmed"
         };
 

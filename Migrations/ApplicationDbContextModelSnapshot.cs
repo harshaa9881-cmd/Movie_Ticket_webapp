@@ -65,12 +65,17 @@ namespace Movie_Ticket_Webapp.Migrations
                         .HasPrecision(10, 2)
                         .HasColumnType("decimal(10,2)");
 
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("BookingId");
 
                     b.HasIndex("BookingReference")
                         .IsUnique();
 
                     b.HasIndex("ShowId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Bookings", t =>
                         {
@@ -344,7 +349,14 @@ namespace Movie_Ticket_Webapp.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("MovieTicketBooking.Models.User", "User")
+                        .WithMany("Bookings")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.Navigation("Show");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("MovieTicketBooking.Models.BookingSeat", b =>
@@ -460,6 +472,11 @@ namespace Movie_Ticket_Webapp.Migrations
             modelBuilder.Entity("MovieTicketBooking.Models.Theatre", b =>
                 {
                     b.Navigation("Screens");
+                });
+
+            modelBuilder.Entity("MovieTicketBooking.Models.User", b =>
+                {
+                    b.Navigation("Bookings");
                 });
 #pragma warning restore 612, 618
         }

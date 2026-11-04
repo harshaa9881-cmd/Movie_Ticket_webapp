@@ -22,6 +22,7 @@ public class User
     [Required]
     [MaxLength(20)]
     public string Role { get; set; } = UserRoles.Customer;
-
+    public ICollection<Booking> Bookings { get; set; }
+    = new List<Booking>();
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }

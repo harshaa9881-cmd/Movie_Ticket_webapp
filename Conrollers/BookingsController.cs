@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using MovieTicketBooking.DTOs.Bookings;
 using MovieTicketBooking.Services.Interfaces;
 using MovieTicketBooking.Constants;
+using System.Security.Claims;
 
 namespace MovieTicketBooking.Controllers;
 
@@ -19,11 +20,18 @@ public class BookingsController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = UserRoles.Admin + "," + UserRoles.Customer)]
     public async Task<IActionResult> CreateBooking(CreateBookingRequest request)
     {
+        var userIdValue = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if (!int.TryParse(userIdValue, out int userId))
+            return Unauthorized();
+
         try
         {
-            var booking = await _bookingService.CreateBookingAsync(request);
+            var booking = await _bookingService.CreateBookingAsync(
+                request, userId);
 
             return Created($"/api/bookings/{booking.BookingId}", booking);
         }
@@ -40,6 +48,7 @@ public class BookingsController : ControllerBase
             return Conflict(new { message = ex.Message });
         }
     }
+
     [HttpGet]
     [Authorize(Roles = UserRoles.Admin)]
     public async Task<IActionResult> GetAll(
