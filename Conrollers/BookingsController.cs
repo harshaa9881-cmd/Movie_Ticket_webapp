@@ -13,10 +13,11 @@ namespace MovieTicketBooking.Controllers;
 public class BookingsController : ControllerBase
 {
     private readonly IBookingService _bookingService;
-
-    public BookingsController(IBookingService bookingService)
+    private readonly IAuthorizationService _authorizationService;
+    public BookingsController(IBookingService bookingService, IAuthorizationService authorizationService)
     {
         _bookingService = bookingService;
+        _authorizationService = authorizationService;
     }
 
     [HttpPost]
@@ -61,13 +62,22 @@ public class BookingsController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    [Authorize(Roles = UserRoles.Admin)]
+    [Authorize(Roles = UserRoles.Admin + "," + UserRoles.Customer)]
     public async Task<IActionResult> GetById(int id)
     {
         var booking = await _bookingService.GetByIdAsync(id);
 
         if (booking == null)
             return NotFound();
+
+        var authorizationResult =
+            await _authorizationService.AuthorizeAsync(
+                User,
+                id,
+                "BookingOwnerOrAdmin");
+
+        if (!authorizationResult.Succeeded)
+            return Forbid();
 
         return Ok(booking);
     }
@@ -87,16 +97,30 @@ public class BookingsController : ControllerBase
             return NotFound();
         }
     }
-
     [HttpPut("{id}/cancel")]
-    [Authorize(Roles = UserRoles.Admin)]
+    [Authorize(Roles = UserRoles.Admin + "," + UserRoles.Customer)]
     public async Task<IActionResult> CancelBooking(int id)
     {
+        var booking = await _bookingService.GetByIdAsync(id);
+
+        if (booking == null)
+            return NotFound();
+
+        var authorizationResult =
+            await _authorizationService.AuthorizeAsync(
+                User,
+                id,
+                "BookingOwnerOrAdmin");
+
+        if (!authorizationResult.Succeeded)
+            return Forbid();
+
         try
         {
-            var booking = await _bookingService.CancelBookingAsync(id);
+            var cancelledBooking =
+                await _bookingService.CancelBookingAsync(id);
 
-            return Ok(booking);
+            return Ok(cancelledBooking);
         }
         catch (KeyNotFoundException)
         {

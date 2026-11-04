@@ -1,8 +1,11 @@
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using MovieTicketBooking.Authorization.Handlers;
+using MovieTicketBooking.Authorization.Requirements;
 using MovieTicketBooking.Data;
 using MovieTicketBooking.Middleware;
 using MovieTicketBooking.Models;
@@ -12,6 +15,7 @@ using MovieTicketBooking.Services;
 using MovieTicketBooking.Services.Interfaces;
 using Scalar.AspNetCore;
 using System.Text;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -50,7 +54,10 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 
 builder.Services.AddScoped<IJwtService, JwtService>();
+
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
+builder.Services.AddScoped<IAuthorizationHandler,
+    BookingOwnerOrAdminHandler>();
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
@@ -98,7 +105,18 @@ builder.Services
             };
     });
 
-builder.Services.AddAuthorization();
+
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("BookingOwnerOrAdmin", policy =>
+    {
+        policy.RequireAuthenticatedUser();
+
+        policy.AddRequirements(
+            new BookingOwnerOrAdminRequirement());
+    });
+});
 
 var app = builder.Build();
 app.UseExceptionHandler();
