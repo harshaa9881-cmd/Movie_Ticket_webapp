@@ -1,0 +1,165 @@
+<div class="container-fluid admin-page py-5">
+
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4">
+    <div>
+      <h1>Movie Management</h1>
+      <p class="text-secondary">
+        Add, update and manage movies in CineBook.
+      </p>
+    </div>
+
+    <button class="btn btn-outline-light"
+            type="button"
+            (click)="resetForm()">
+      Add New Movie
+    </button>
+  </div>
+
+  <div *ngIf="successMessage" class="alert alert-success">
+    {{ successMessage }}
+  </div>
+
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    {{ errorMessage }}
+  </div>
+
+  <div class="admin-form mb-5">
+
+    <h4>{{ isEditing ? 'Edit Movie' : 'Add Movie' }}</h4>
+
+    <div class="row g-3">
+
+      <div class="col-md-6">
+        <label class="form-label">Movie Title *</label>
+        <input type="text"
+               class="form-control"
+               [(ngModel)]="movieForm.title"
+               name="title">
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label">Genre *</label>
+        <input type="text"
+               class="form-control"
+               [(ngModel)]="movieForm.genre"
+               name="genre">
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label">Language *</label>
+        <input type="text"
+               class="form-control"
+               [(ngModel)]="movieForm.language"
+               name="language">
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label">Duration (Minutes) *</label>
+        <input type="number"
+               class="form-control"
+               [(ngModel)]="movieForm.durationMinutes"
+               name="durationMinutes"
+               min="1">
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label">Release Date *</label>
+        <input type="date"
+               class="form-control"
+               [(ngModel)]="movieForm.releaseDate"
+               name="releaseDate">
+      </div>
+
+      <div class="col-md-12">
+        <label class="form-label">Description</label>
+        <textarea class="form-control"
+                  rows="3"
+                  [(ngModel)]="movieForm.description"
+                  name="description">
+        </textarea>
+      </div>
+
+    </div>
+
+    <div class="mt-4">
+      <button class="btn btn-danger me-2"
+              type="button"
+              (click)="saveMovie()">
+        {{ isEditing ? 'Update Movie' : 'Add Movie' }}
+      </button>
+
+      <button class="btn btn-outline-light"
+              type="button"
+              (click)="resetForm()">
+        Clear
+      </button>
+    </div>
+
+  </div>
+
+  <div class="movie-table-section">
+
+    <h4 class="mb-3">Movies List</h4>
+
+    <div *ngIf="isLoading" class="text-center py-4">
+      <div class="spinner-border text-danger"></div>
+    </div>
+
+    <div class="table-responsive" *ngIf="!isLoading">
+
+      <table class="table table-dark table-hover align-middle">
+
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Genre</th>
+            <th>Language</th>
+            <th>Duration</th>
+            <th>Release Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+
+        <tbody>
+
+          <tr *ngFor="let movie of movies">
+
+            <td>{{ movie.movieId }}</td>
+            <td>{{ movie.title }}</td>
+            <td>{{ movie.genre }}</td>
+            <td>{{ movie.language }}</td>
+            <td>{{ movie.durationMinutes }} mins</td>
+            <td>{{ movie.releaseDate | date:'dd MMM yyyy' }}</td>
+
+            <td>
+              <button class="btn btn-sm btn-outline-warning me-2"
+                      type="button"
+                      (click)="editMovie(movie)">
+                Edit
+              </button>
+
+              <button class="btn btn-sm btn-outline-danger"
+                      type="button"
+                      (click)="deleteMovie(movie.movieId)">
+                Delete
+              </button>
+            </td>
+
+          </tr>
+
+          <tr *ngIf="movies.length === 0">
+            <td colspan="7" class="text-center py-4">
+              No movies found.
+            </td>
+          </tr>
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </div>
+
+</div>

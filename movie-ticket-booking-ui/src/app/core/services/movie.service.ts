@@ -39,4 +39,15 @@ export class MovieService {
 
     return this.http.get<Movie[]>(`${this.apiUrl}/search`, { params });
   }
+  addMovie(movie: Partial<Movie>): Observable<Movie> {
+    return this.http.post<Movie>(this.apiUrl, movie);
+  }
+
+  updateMovie(id: number, movie: Partial<Movie>): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${id}`, movie);
+  }
+
+  deleteMovie(id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${id}`);
+  }
 }
