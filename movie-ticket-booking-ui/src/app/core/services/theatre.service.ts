@@ -21,4 +21,16 @@ export class TheatreService {
   getTheatreById(id: number): Observable<Theatre> {
     return this.http.get<Theatre>(`${this.apiUrl}/${id}`);
   }
+
+  addTheatre(theatre: Partial<Theatre>): Observable<Theatre> {
+    return this.http.post<Theatre>(this.apiUrl, theatre);
+  }
+
+  updateTheatre(id: number, theatre: Partial<Theatre>): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${id}`, theatre);
+  }
+
+  deleteTheatre(id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${id}`);
+  }
 }

@@ -1,0 +1,152 @@
+<div class="container-fluid admin-page py-5">
+
+  <h1>Seat Management</h1>
+  <p class="text-secondary mb-4">
+    Create and manage seats for each screen.
+  </p>
+
+  <div *ngIf="successMessage" class="alert alert-success">
+    {{ successMessage }}
+  </div>
+
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    {{ errorMessage }}
+  </div>
+
+  <div class="admin-form mb-5">
+
+    <h4>Bulk Seat Creation</h4>
+
+    <div class="row g-3">
+
+      <div class="col-md-6">
+        <label class="form-label">Screen</label>
+
+        <select class="form-select"
+                [(ngModel)]="selectedScreenId"
+                name="selectedScreenId"
+                (change)="loadSeats()">
+
+          <option [ngValue]="0">Select Screen</option>
+
+          <option *ngFor="let screen of screens"
+                  [ngValue]="screen.screenId">
+            {{ screen.theatreName }} - {{ screen.screenName }}
+          </option>
+
+        </select>
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label">Row Name</label>
+        <input type="text"
+               class="form-control"
+               [(ngModel)]="rowName"
+               name="rowName"
+               placeholder="Example: A">
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label">Starting Seat Number</label>
+        <input type="number"
+               class="form-control"
+               [(ngModel)]="startSeatNumber"
+               name="startSeatNumber"
+               min="1">
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label">Ending Seat Number</label>
+        <input type="number"
+               class="form-control"
+               [(ngModel)]="endSeatNumber"
+               name="endSeatNumber"
+               min="1">
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label">Seat Type</label>
+
+        <select class="form-select"
+                [(ngModel)]="seatType"
+                name="seatType">
+
+          <option value="Regular">Regular</option>
+          <option value="Premium">Premium</option>
+          <option value="VIP">VIP</option>
+
+        </select>
+      </div>
+
+    </div>
+
+    <button class="btn btn-danger mt-4"
+            type="button"
+            [disabled]="!selectedScreenId"
+            (click)="addBulkSeats()">
+      Create Seats
+    </button>
+
+  </div>
+
+  <div class="admin-table">
+
+    <h4 class="mb-3">Seats List</h4>
+
+    <div *ngIf="isLoading" class="text-center">
+      <div class="spinner-border text-danger"></div>
+    </div>
+
+    <div *ngIf="!isLoading && selectedScreenId && seats.length === 0"
+         class="text-center py-4">
+      No seats found for this screen.
+    </div>
+
+    <div class="table-responsive"
+         *ngIf="!isLoading && seats.length > 0">
+
+      <table class="table table-dark table-hover">
+
+        <thead>
+          <tr>
+            <th>Seat ID</th>
+            <th>Screen ID</th>
+            <th>Row</th>
+            <th>Seat Number</th>
+            <th>Seat Type</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+
+        <tbody>
+
+          <tr *ngFor="let seat of seats">
+
+            <td>{{ seat.seatId }}</td>
+            <td>{{ seat.screenId }}</td>
+            <td>{{ seat.rowName }}</td>
+            <td>{{ seat.seatNumber }}</td>
+            <td>{{ seat.seatType }}</td>
+
+            <td>
+              <button class="btn btn-sm btn-outline-danger"
+                      (click)="deleteSeat(seat.seatId)">
+                Delete
+              </button>
+            </td>
+
+          </tr>
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+    <p *ngIf="!selectedScreenId" class="text-secondary">
+      Select a screen to view its seats.
+    </p>
+
+  </div>
+
+</div>

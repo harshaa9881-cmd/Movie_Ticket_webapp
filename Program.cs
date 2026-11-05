@@ -131,12 +131,27 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseRouting();
+
 app.UseCors("AllowAngular");
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseMiddleware<EndpointMetadataMiddleware>();
+}
 
 app.UseAuthentication();
 
+if (app.Environment.IsDevelopment())
+{
+    app.UseMiddleware<AuthenticationDiagnosticsMiddleware>();
+
+    // 7. Authorization Diagnostics
+    app.UseMiddleware<AuthorizationDiagnosticsMiddleware>();
+}
 app.UseAuthorization();
 
 app.MapControllers();
 
 app.Run();
+

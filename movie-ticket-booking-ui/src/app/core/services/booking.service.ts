@@ -21,8 +21,18 @@ export class BookingService {
     return this.http.post<BookingResponse>(this.apiUrl, request);
   }
 
-  getBookings(): Observable<BookingResponse[]> {
-    return this.http.get<BookingResponse[]>(this.apiUrl);
+  getBookings(showId?: number, status?: string): Observable<BookingResponse[]> {
+    let params = new HttpParams();
+
+    if (showId !== undefined) {
+      params = params.set('showId', showId);
+    }
+
+    if (status) {
+      params = params.set('status', status);
+    }
+
+    return this.http.get<BookingResponse[]>(this.apiUrl, { params });
   }
 
   getBookingById(id: number): Observable<BookingResponse> {

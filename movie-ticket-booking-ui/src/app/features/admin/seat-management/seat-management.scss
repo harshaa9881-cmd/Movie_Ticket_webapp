@@ -1,0 +1,57 @@
+.admin-page {
+  min-height: 75vh;
+}
+
+  .admin-page h1 {
+    font-size: 2rem;
+    font-weight: 700;
+  }
+
+.admin-form,
+.admin-table {
+  background-color: #1c1c24;
+  border: 1px solid #303039;
+  border-radius: 12px;
+  padding: 25px;
+}
+
+  .admin-form h4,
+  .admin-table h4 {
+    font-weight: 700;
+    margin-bottom: 20px;
+  }
+
+.form-control,
+.form-select {
+  background-color: #202027;
+  border: 1px solid #393942;
+  color: white;
+  padding: 11px;
+}
+
+  .form-select option {
+    background-color: #202027;
+    color: white;
+  }
+
+  .form-control:focus,
+  .form-select:focus {
+    background-color: #202027;
+    color: white;
+    border-color: #dc3545;
+    box-shadow: none;
+  }
+
+.form-label {
+  color: #ddd;
+}
+
+.table {
+  border: 1px solid #303039;
+}
+
+  .table th,
+  .table td {
+    padding: 14px;
+    white-space: nowrap;
+  }

@@ -1,0 +1,137 @@
+<div class="container py-4">
+
+  <h2 class="page-title mb-4">Booking Management</h2>
+
+  <div *ngIf="message" class="alert alert-success">
+    {{ message }}
+  </div>
+
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    {{ errorMessage }}
+  </div>
+
+  <div class="management-card mb-4">
+
+    <h4>Filter Bookings</h4>
+
+    <div class="row align-items-end">
+
+      <div class="col-md-4 mb-3">
+        <label class="form-label">Show ID</label>
+        <input type="number"
+               class="form-control"
+               [(ngModel)]="showId"
+               placeholder="Enter Show ID">
+      </div>
+
+      <div class="col-md-4 mb-3">
+        <label class="form-label">Booking Status</label>
+        <select class="form-select" [(ngModel)]="status">
+          <option value="">All Statuses</option>
+          <option value="Confirmed">Confirmed</option>
+          <option value="Cancelled">Cancelled</option>
+        </select>
+      </div>
+
+      <div class="col-md-4 mb-3">
+        <button class="btn btn-danger me-2" (click)="loadBookings()">
+          Search
+        </button>
+
+        <button class="btn btn-secondary" (click)="clearFilters()">
+          Clear
+        </button>
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="management-card mb-4">
+
+    <h4 class="mb-3">All Bookings</h4>
+
+    <div class="table-responsive">
+      <table class="table table-dark table-hover align-middle">
+
+        <thead>
+          <tr>
+            <th>Booking ID</th>
+            <th>Reference</th>
+            <th>Customer</th>
+            <th>Show ID</th>
+            <th>Booking Date</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr *ngFor="let booking of bookings">
+
+            <td>{{ booking.bookingId }}</td>
+            <td>{{ booking.bookingReference }}</td>
+            <td>{{ booking.customerName }}</td>
+            <td>{{ booking.showId }}</td>
+            <td>{{ booking.bookingDate | date:'short' }}</td>
+            <td>₹{{ booking.totalAmount }}</td>
+            <td>{{ booking.status }}</td>
+
+            <td>
+              <button class="btn btn-sm btn-info me-2"
+                      (click)="viewBooking(booking.bookingId)">
+                View
+              </button>
+
+              <button *ngIf="booking.status !== 'Cancelled'"
+                      class="btn btn-sm btn-danger"
+                      (click)="cancelBooking(booking.bookingId)">
+                Cancel
+              </button>
+            </td>
+
+          </tr>
+
+          <tr *ngIf="bookings.length === 0">
+            <td colspan="8" class="text-center">
+              No bookings found.
+            </td>
+          </tr>
+        </tbody>
+
+      </table>
+    </div>
+
+  </div>
+
+  <div *ngIf="selectedBooking" class="management-card">
+
+    <h4>Booking Details</h4>
+
+    <p><strong>Booking Reference:</strong> {{ selectedBooking.bookingReference }}</p>
+    <p><strong>Customer:</strong> {{ selectedBooking.customerName }}</p>
+    <p><strong>Email:</strong> {{ selectedBooking.customerEmail }}</p>
+    <p><strong>Phone:</strong> {{ selectedBooking.customerPhone }}</p>
+    <p><strong>Show ID:</strong> {{ selectedBooking.showId }}</p>
+    <p><strong>Booking Date:</strong> {{ selectedBooking.bookingDate | date:'medium' }}</p>
+    <p><strong>Total Amount:</strong> ₹{{ selectedBooking.totalAmount }}</p>
+    <p><strong>Status:</strong> {{ selectedBooking.status }}</p>
+
+    <p><strong>Seats:</strong></p>
+
+    <span *ngFor="let seat of selectedBooking.seats"
+          class="seat-label">
+      {{ seat }}
+    </span>
+
+    <div class="mt-3">
+      <button class="btn btn-secondary"
+              (click)="selectedBooking = null">
+        Close
+      </button>
+    </div>
+
+  </div>
+
+</div>

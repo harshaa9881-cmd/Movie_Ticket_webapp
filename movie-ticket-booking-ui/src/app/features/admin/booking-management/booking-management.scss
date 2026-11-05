@@ -1,0 +1,49 @@
+.page-title {
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.management-card {
+  background: #1c1c24;
+  padding: 25px;
+  border-radius: 12px;
+  color: #ffffff;
+
+  h4 {
+    margin-bottom: 20px;
+  }
+
+  .form-label {
+    color: #dddddd;
+  }
+
+  .form-control,
+  .form-select {
+    background-color: #292933;
+    color: #ffffff;
+    border: 1px solid #444450;
+  }
+
+    .form-control:focus,
+    .form-select:focus {
+      border-color: #dc3545;
+      box-shadow: none;
+    }
+
+  option {
+    background-color: #292933;
+  }
+
+  .table {
+    margin-bottom: 0;
+  }
+}
+
+.seat-label {
+  display: inline-block;
+  background: #dc3545;
+  color: white;
+  padding: 6px 12px;
+  margin: 4px;
+  border-radius: 6px;
+}

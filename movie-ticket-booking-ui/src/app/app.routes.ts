@@ -19,6 +19,10 @@ import { MovieManagement } from './features/admin/movie-management/movie-managem
 import { Dashboard as AdminDashboard } from './features/admin/dashboard/dashboard';
 import { Dashboard as CustomerDashboard } from './features/customer/dashboard/dashboard';
 
+import { TheatreManagement } from './features/admin/theatre-management/theatre-management';
+import { ScreenManagement } from './features/admin/screen-management/screen-management';
+import { SeatManagement } from './features/admin/seat-management/seat-management';
+
 import { authGuard } from './core/guards/auth.guard';
 import { adminGuard } from './core/guards/admin.guard';
 import { customerGuard } from './core/guards/customer.guard';
@@ -89,6 +93,21 @@ export const routes: Routes = [
   {
     path: 'admin/movies',
     component: MovieManagement,
+    canActivate: [authGuard, adminGuard]
+  },
+  {
+    path: 'admin/theatres',
+    component: TheatreManagement,
+    canActivate: [authGuard, adminGuard]
+  },
+  {
+    path: 'admin/screens',
+    component: ScreenManagement,
+    canActivate: [authGuard, adminGuard]
+  },
+  {
+    path: 'admin/seats',
+    component: SeatManagement,
     canActivate: [authGuard, adminGuard]
   },
 

@@ -1,0 +1,142 @@
+<div class="container py-4">
+
+  <h2 class="page-title mb-4">Show Management</h2>
+
+  <div *ngIf="message" class="alert alert-success">
+    {{ message }}
+  </div>
+
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    {{ errorMessage }}
+  </div>
+
+  <div class="management-card mb-4">
+    <h4>{{ editingShowId ? 'Update Show' : 'Add New Show' }}</h4>
+
+    <form (ngSubmit)="saveShow()">
+
+      <div class="row">
+
+        <div class="col-md-6 mb-3">
+          <label class="form-label">Movie</label>
+          <select class="form-select"
+                  name="movieId"
+                  [(ngModel)]="showForm.movieId"
+                  required>
+            <option [ngValue]="0">Select Movie</option>
+            <option *ngFor="let movie of movies" [ngValue]="movie.movieId">
+              {{ movie.title }}
+            </option>
+          </select>
+        </div>
+
+        <div class="col-md-6 mb-3">
+          <label class="form-label">Screen</label>
+          <select class="form-select"
+                  name="screenId"
+                  [(ngModel)]="showForm.screenId"
+                  required>
+            <option [ngValue]="0">Select Screen</option>
+            <option *ngFor="let screen of screens" [ngValue]="screen.screenId">
+              {{ screen.theatreName }} - {{ screen.screenName }}
+            </option>
+          </select>
+        </div>
+
+        <div class="col-md-6 mb-3">
+          <label class="form-label">Start Time</label>
+          <input type="datetime-local"
+                 class="form-control"
+                 name="startTime"
+                 [(ngModel)]="showForm.startTime"
+                 required>
+        </div>
+
+        <div class="col-md-6 mb-3">
+          <label class="form-label">End Time</label>
+          <input type="datetime-local"
+                 class="form-control"
+                 name="endTime"
+                 [(ngModel)]="showForm.endTime"
+                 required>
+        </div>
+
+        <div class="col-md-6 mb-3">
+          <label class="form-label">Ticket Price</label>
+          <input type="number"
+                 class="form-control"
+                 name="ticketPrice"
+                 [(ngModel)]="showForm.ticketPrice"
+                 min="1"
+                 required>
+        </div>
+
+      </div>
+
+      <button type="submit" class="btn btn-danger me-2">
+        {{ editingShowId ? 'Update Show' : 'Add Show' }}
+      </button>
+
+      <button type="button"
+              class="btn btn-secondary"
+              (click)="resetForm()">
+        Clear
+      </button>
+
+    </form>
+  </div>
+
+  <div class="management-card">
+    <h4 class="mb-3">All Shows</h4>
+
+    <div class="table-responsive">
+      <table class="table table-dark table-hover align-middle">
+
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Movie</th>
+            <th>Theatre</th>
+            <th>Screen</th>
+            <th>Start Time</th>
+            <th>End Time</th>
+            <th>Price</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr *ngFor="let show of shows">
+            <td>{{ show.showId }}</td>
+            <td>{{ show.movieTitle }}</td>
+            <td>{{ show.theatreName }}</td>
+            <td>{{ show.screenName }}</td>
+            <td>{{ show.startTime | date:'short' }}</td>
+            <td>{{ show.endTime | date:'short' }}</td>
+            <td>₹{{ show.ticketPrice }}</td>
+
+            <td>
+              <button class="btn btn-sm btn-warning me-2"
+                      (click)="editShow(show)">
+                Edit
+              </button>
+
+              <button class="btn btn-sm btn-danger"
+                      (click)="deleteShow(show.showId)">
+                Delete
+              </button>
+            </td>
+          </tr>
+
+          <tr *ngIf="shows.length === 0">
+            <td colspan="8" class="text-center">
+              No shows found.
+            </td>
+          </tr>
+        </tbody>
+
+      </table>
+    </div>
+  </div>
+
+</div>
